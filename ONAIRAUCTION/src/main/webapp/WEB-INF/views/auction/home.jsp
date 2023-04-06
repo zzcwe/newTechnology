@@ -811,7 +811,7 @@
                 <div class="itemid">
                     <strong>Item ID</strong>
                     <span>304798106833</span>
-                    <a href="#"></a>
+                    <a href="https://www.ebay.com/itm/304798106833?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5338569225&customid=&toolid=10001&mkevt=1" class="all_icon"></a>
                     <button class="share_btn" id="modal_open_btn">
                         <span class="all_icon"></span>
                     </button>
@@ -910,8 +910,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    
+    </div> 
     <div class="modal_layer">
         <div id="modal">
             <div class="modal_content">
@@ -936,18 +935,19 @@
             <button type="button" id="modal_close_btn">공유 취소하기</button>
         </div>
     </div>
-
-    <div class="modal_layer modal_layer1">
-        <div id="modal">
-            <div class="modal_content1">
-                회원님의 입찰신청 가격은 : 10,000원 입니다. <br>
-                입찰하시겠습니까?
+    <form action="" method="">
+        <div class="modal_layer modal_layer1">
+            <div id="modal">
+                <div class="modal_content1">
+                    회원님의 입찰신청 가격은 : 10,000원 입니다. <br>
+                    입찰하시겠습니까?
+                </div>
+                <button type="submit" id="modal_double_btn1">x  2 입찰하기</button>
+                <button type="button" id="modal_close_btn1">입찰 취소</button>
+                <button type="submit" id="modal_confirm_btn1">입찰 확인</button>
             </div>
-            <button type="button" id="modal_double_btn1">x  2 입찰하기</button>
-            <button type="button" id="modal_close_btn1">입찰 취소</button>
-            <button type="submit" id="modal_confirm_btn1">입찰 확인</button>
         </div>
-    </div>
+    </form>
 
     <div class="modal_layer modal_layer2">
         <div id="modal">
@@ -976,41 +976,41 @@
             <button type="button" id="modal_close_btn3" class="close_btn">닫기</button>
         </div>
     </div>
-    <div class="modal_layer modal_layer4">
-        <div id="modal">
-            <div class="modal_content3">
-                <form action="">
-                    <select name="" id="" style="border-radius: 20px; padding: 5px; border: 2px solid black; font-weight: bold;" >
-                        <option value="">상품신고</option>
-                        <option value="">유저신고</option>
-                        <option value="">경매신고</option>
-                        <option value="">기타신고</option>
-                    </select>
-                    <input type="text" placeholder="아이디 or 상품코드" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc;">
-                    <input type="text" placeholder="제목을 입력해주세요." style="width: 100%; margin-top: 10px; border-radius: 20px; padding: 5px; box-sizing: border-box; border: 2px solid #ccc;">
-                    <div class="textarea_container">
-                        <textarea name="" id="" cols="30" rows="10" style="width: 100%; padding: 5px; border-radius: 20px; box-sizing: border-box; height: 100%; border: none;" placeholder="내용을 입력해주세요."></textarea>
-                    </div>
-                </form>
+    <form action="<c:url value='/'></c:url>" method="post">
+        <div class="modal_layer modal_layer4">
+            <div id="modal">
+                <div class="modal_content3">
+                        <select name="" id="" style="border-radius: 20px; padding: 5px; border: 2px solid black; font-weight: bold;" >
+                            <option value="">상품신고</option>
+                            <option value="">유저신고</option>
+                            <option value="">경매신고</option>
+                            <option value="">기타신고</option>
+                        </select>
+                        <input type="text" placeholder="아이디 or 상품코드" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc;">
+                        <input type="text" placeholder="제목을 입력해주세요." name="re_title" style="width: 100%; margin-top: 10px; border-radius: 20px; padding: 5px; box-sizing: border-box; border: 2px solid #ccc;">
+                        <div class="textarea_container">
+                            <textarea name="re_content" id="" cols="30" rows="10" style="width: 100%; padding: 5px; border-radius: 20px; box-sizing: border-box; height: 100%; border: none;" placeholder="내용을 입력해주세요."></textarea>
+                        </div>
+                </div>
+                <button type="button" id="modal_close_btn4" class="close_btn1">닫기</button>
+                <button type="submit" id="modal_confirm_btn4" class="confirm_btn1">확인</button>
             </div>
-            <button type="button" id="modal_close_btn4" class="close_btn1">닫기</button>
-            <button type="button" id="modal_confirm_btn4" class="confirm_btn1">확인</button>
         </div>
-    </div>
-    <div class="modal_layer modal_layer5">
-        <div id="modal">
-            <div class="modal_content3">
-                <form action="">
-                    <input type="text" placeholder="제목을 입력해주세요." style="width: 100%; margin-top: 10px; border-radius: 20px; padding: 5px; box-sizing: border-box; border: 2px solid #ccc;">
-                    <div class="textarea_container">
-                        <textarea name="" id="" cols="30" rows="10" style="border: none; width: 100%; height: 100%; border-radius: 20px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc;" placeholder="내용을 입력해주세요."></textarea>
-                    </div>
-                </form>
+    </form>
+    <form action="<c:url value='/notebox'></c:url>" method="post">
+        <div class="modal_layer modal_layer5">
+            <div id="modal">
+                <div class="modal_content3">
+                        <input type="text" placeholder="제목을 입력해주세요." name="nb_title" style="width: 100%; margin-top: 10px; border-radius: 20px; padding: 5px; box-sizing: border-box; border: 2px solid #ccc;">
+                        <div class="textarea_container">
+                            <textarea name="nb_content" id="" cols="30" rows="10" style="border: none; width: 100%; height: 100%; border-radius: 20px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc;" placeholder="내용을 입력해주세요."></textarea>
+                        </div>
+                </div>
+                <button type="button" id="modal_close_btn5" class="close_btn2">닫기</button>
+                <button type="submit" id="modal_confirm_btn5" class="confirm_btn2">보내기</button>
             </div>
-            <button type="button" id="modal_close_btn5" class="close_btn2">닫기</button>
-            <button type="button" id="modal_confirm_btn5" class="confirm_btn2">보내기</button>
         </div>
-    </div>
+    </form>
 
     
 
@@ -1130,6 +1130,16 @@
         closeBtn.addEventListener("click", e => {
         modalOff1()
         })
+        const closeBtn1 = modal1.querySelector("#modal_double_btn1")
+        closeBtn1.addEventListener("click", e => {
+        modalOff1()
+        alert("입찰신청가격 * 2로 입찰하였습니다.")
+        })
+        const closeBtn2 = modal1.querySelector("#modal_confirm_btn1")
+        closeBtn2.addEventListener("click", e => {
+        modalOff1()
+        alert("현재입찰가로 입찰하였습니다.")
+        })
     })
     $(function(){
         const modal1 = document.querySelector('.modal_layer2')
@@ -1184,6 +1194,11 @@
         closeBtn.addEventListener("click", e => {
             modalOff1()
         })
+        const closeBtn1 = modal1.querySelector("#modal_confirm_btn4")
+        closeBtn1.addEventListener("click", e => {
+            modalOff1()
+            alert("신고가 접수되었습니다.")
+        })
     })
     $(function(){
         const modal1 = document.querySelector('.modal_layer5')
@@ -1201,6 +1216,11 @@
         const closeBtn = modal1.querySelector("#modal_close_btn5")
         closeBtn.addEventListener("click", e => {
             modalOff1()
+        })
+        const closeBtn1 = modal1.querySelector("#modal_confirm_btn5")
+        closeBtn1.addEventListener("click", e => {
+            modalOff1()
+            alert("쪽지가 전송되었습니다.")
         })
     })
     </script>

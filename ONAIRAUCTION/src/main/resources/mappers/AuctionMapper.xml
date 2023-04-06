@@ -6,4 +6,15 @@
   	<select id="getEmail" resultType="String">
     	select me_email from member where me_id = #{id}
   	</select>
+  	<select id="selectReportCategory" resultType="kr.kh.onairauction.vo.ReportCategoryVO">
+  		select rc_name from report_category
+  	</select>
+  	<insert id="insertReport">
+	  	insert into report(re_title, re_content)
+	  		values(#{r.re_title},#{r.re_content})
+  	</insert>
+  	<insert id="insertNote">
+	  	insert into note_box(nb_title, nb_content)
+	  		values(#{n.nb_title},#{n.nb_content})
+  	</insert>
 </mapper>
