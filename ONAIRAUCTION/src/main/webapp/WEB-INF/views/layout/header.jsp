@@ -18,16 +18,19 @@
             <div class="comList2">
                 <ul class="list-unstyled">
                     <li class="clearFix">
-                        <p>
+                        <p class="auction_welcome">
                             <a href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">처음이신가요?</a>
                         </p>
-                        <p>
-                            <a href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">로그인</a>
+                        <p class="auction_login">
+                            <a  href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">로그인</a>
                         </p>
-                        <p>
+                        <p class="auction_signup">
                             <a href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">회원가입</a>
                         </p>
-                        <p>
+                        <p class="auction_massage" onclick="openPopup()">
+                        	<a href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">쪽지함</a>
+                        </p>
+                        <p class="auction_mypage">
                             <a href="#" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">마이페이지</a>
                         </p>
                     </li>

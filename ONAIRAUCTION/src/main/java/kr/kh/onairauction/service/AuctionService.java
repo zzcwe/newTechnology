@@ -2,16 +2,38 @@ package kr.kh.onairauction.service;
 
 import java.util.ArrayList;
 
-import kr.kh.onairauction.vo.NoteBoxVO;
-import kr.kh.onairauction.vo.ReportCategoryVO;
-import kr.kh.onairauction.vo.ReportVO;
+import kr.kh.onairauction.vo2.AuctionRecordVO;
+import kr.kh.onairauction.vo2.AuctionVO;
+import kr.kh.onairauction.vo2.MemberVO;
+import kr.kh.onairauction.vo2.MembershipLevelVO;
+import kr.kh.onairauction.vo2.MessageVO;
+import kr.kh.onairauction.vo2.ProductVO;
+import kr.kh.onairauction.vo2.ReportCategoryVO;
+import kr.kh.onairauction.vo2.ReportVO;
+import kr.kh.onairauction.vo2.VirtualAccountVO;
 
 public interface AuctionService {
-	String getEmail(String id);
 	
-	ArrayList<ReportCategoryVO> getReportCategoryName();
+	ArrayList<ReportCategoryVO> selectReportCategory();
 
-	boolean register(ReportVO report);
+	boolean insertReport(ReportVO report);
 	
-	boolean registerNote(NoteBoxVO note);
+	boolean insertMessage(MessageVO message);
+	
+	ArrayList<AuctionRecordVO> selectAuctionRecord();
+	
+	MemberVO getUser(String me_id); //나중에 삭제
+	
+	boolean insertBid(Double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum);
+	
+	MembershipLevelVO selectMebership(String levelName);
+
+	VirtualAccountVO selectAccount(String id);
+	
+	AuctionVO getAuction(String id); //나중에 삭제
+
+	ProductVO selectProduct(int productCode);
+
+	MemberVO selectSeller(String sellerId);
+	
 }

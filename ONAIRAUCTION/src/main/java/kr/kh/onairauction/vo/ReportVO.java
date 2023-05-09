@@ -1,6 +1,7 @@
 package kr.kh.onairauction.vo;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,11 +12,15 @@ public class ReportVO {
 	int re_num;
 	String re_title;
 	String re_content;
-	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	Date re_date;
 	String re_result;
 	String re_me_id;
-	String re_rc_name;
+	int re_rc_num;
 	String re_report_id;
 	int re_pr_code;
+	
+public String getRe_date() {
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return date.format(re_date);
+	 	}
 }

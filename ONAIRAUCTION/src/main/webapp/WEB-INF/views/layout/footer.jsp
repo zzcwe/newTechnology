@@ -20,7 +20,6 @@
         <div class="bottomCensebar">
             <div class="bottomCensebar1">
                 <div class="bottomCensebar1-1">
-                    <img src="http://www.kobay.co.kr/kobay/images/common/footlLcense.gif" alt="">
                 </div>
                 <div class="bottomCensebar1-2"></div>
             </div>
