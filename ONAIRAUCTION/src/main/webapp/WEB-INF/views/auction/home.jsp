@@ -655,7 +655,7 @@
     .modal_layer5 .modal_content3 {
         display: block;
         width:600px;
-        height: 500px;
+        height: 600px;
         background:#fff;
         border:1px solid #666;
         box-sizing: border-box;
@@ -834,8 +834,8 @@
                 <a href="#" class="sel_btn" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">판매자 찜
                     <span class="all_icon"></span>
                 </a>
-                <a href="#" class="more_btn" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">판매자 상품 보기
-                    <span class="all_icon"></span>
+                <a href='<c:url value="/userStore"></c:url>' class="more_btn" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">판매자 상품 보기
+                    <span class="all_icon"></span> <!--/{store_num}-->
                 </a>
             </div>
             <div class="add">
@@ -924,7 +924,7 @@
                             <dt class="dt123">입찰 견적가</dt>
                             <dd>
                                 <strong>
-                                    <font class="amount">원화표시 가격</font>
+                                    <font class="amount">원화표시가격</font>
                                 </strong>
                                 <button class="est_view" id="modal_open_btn2" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">
                                     자세히보기
@@ -949,7 +949,7 @@
                         <div class="box1">채팅참여자 ID목록</div>
                         <div class="box2">총 인원 0명</div>
                     </div>
-                    <textarea class="chat_list" name="" id="" cols="30" rows="10"></textarea>
+                    <div class="chat_list" name="" id="" cols="30" rows="10"></div>
                 </div>
             </div>
         </div>
@@ -959,7 +959,7 @@
         <div id="modal">
         	<div id="tabl4">
              <div class="modal_content1">
-                 회원님의 입찰신청 가격은 : ${lastAuctionRecord.getAr_next_bid_price()} 입니다. <br>
+                 회원님의 입찰신청 가격은 : $ ${lastAuctionRecord.getAr_next_bid_price()} 입니다. <br>
                  입찰하시겠습니까?
              </div>
             </div>
@@ -1007,8 +1007,8 @@
                             </c:forEach>
                         </select>
                         <input type="hidden" name="re_me_id" value="${user.me_id}">
-                        <input type="text" placeholder="아이디코드" name="re_report_id" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc;">
-                        <input type="text" placeholder="상품코드" name="re_report_product" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc;">
+                        <input type="text" placeholder="아이디코드" name="re_report_id" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc; width: 35%">
+                        <input type="text" placeholder="상품코드" name="re_report_product" style="border-radius: 20px; padding: 5px; margin-left: 5px; border: 2px solid #ccc; width: 35%">
                         <div class="textarea_container">
                             <textarea name="re_content"  cols="30" rows="10" style="width: 100%; padding: 5px; border-radius: 20px; box-sizing: border-box; height: 100%; border: none;" placeholder="내용을 입력해주세요."></textarea>
                         </div>
@@ -1018,14 +1018,12 @@
             </div>
         </div>
     </form>
-    <form action="<c:url value='/message'></c:url>" method="post">
+    <form action="<c:url value='/message'></c:url>" method="post" class="message">
         <div class="modal_layer modal_layer5">
             <div id="modal">
                 <div class="modal_content3">
                         <input type="text" placeholder="제목을 입력해주세요." name="me_title" style="width: 100%; margin-top: 10px; border-radius: 20px; padding: 5px; box-sizing: border-box; border: 2px solid #ccc;">
-                        <div class="textarea_container">
-                            <textarea name="me_content" id="" cols="30" rows="10" style="border: none; width: 100%; height: 100%; border-radius: 20px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc;" placeholder="내용을 입력해주세요."></textarea>
-                        </div>
+                        <input name="me_content"style="border: none; width: 100%; height: 400px	; border-radius: 20px; padding: 10px; box-sizing: border-box; border: 2px solid #ccc; margin-top: 5px" placeholder="내용을 입력해주세요.">
                         <input type="hidden" name="me_send_id" value="${user.me_id}">
                         <input type="hidden" name="me_receive_id" value="${auctionSeller.me_id}">
                 </div>
@@ -1035,6 +1033,7 @@
         </div>
     </form>
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
+    <input type="hidden" id="sellerLikeState" value="${likeState}">
 	<div id="myPopup" class="popup">
       <div class="popup-content" onmousedown="dragPopup(event)">
         <div class="close-popup">
@@ -1070,7 +1069,8 @@
         </div>
       </div>
     </div>	
-    
+    ${lastAuctionRecord.getAr_next_bid_price()}
+    ${likeState}
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
@@ -1119,6 +1119,17 @@
     </script>
     <script>
     $(document).ready(function(){ 
+    	let sellerLikeState = $("#sellerLikeState").val();
+
+        if(sellerLikeState == 1){
+            $('.sel_btn span').prop('id','heart1');
+        }else if(sellerLikeState == 0){
+            $('.sel_btn span').prop('id','');
+        }
+        
+        console.log($('.sel_btn span').prop('id'));
+    });
+    $(document).ready(function(){ 
 	    $('.product-seller .sel_btn').click(function(){
 	        let identify;
 	        if($('.sel_btn span').prop('id') === ''){
@@ -1135,6 +1146,21 @@
 	        }
 	        console.log($('.sel_btn span').prop('id'));
 	    });
+    });
+  
+    $(document).ready(function(){
+    	$('.sel_btn span').click(function(){
+	        let sellerLikeState = $("#sellerLikeState").val();
+
+	        if(sellerLikeState === 0){
+	        	//$('.sel_btn span').prop('id','');
+	            $('.sel_btn span').prop('id','heart1');
+	        }else if(sellerLikeState === 1){
+	        	//$('.sel_btn span').prop('id','');
+	            $('.sel_btn span').prop('id','');
+	        }
+	        console.log($('.sel_btn span').prop('id'));
+    	});
     });
 	$(document).ready(function(){
 	    $('.itemid .like_btn').click(function(){
@@ -1311,8 +1337,12 @@
 	    			
 	    			var text2 = html.find("div#indexListAjax4").detach();
 	    			//$('#tabl4').html(text2);
+	    			
 	    			var text3 = html.find("ul#indexListAjax5").detach();
 	    			$('#tabl5').html(text3);
+	    			
+	    			var text4 = html.find("ul#indexListAjax6").detach();
+	    			$('#tabl6').html(text4);
 	    			
 	    	}).fail(function (jqXHR, textStatus, errorThrown) {
 	    		console.log("에러");
@@ -1340,7 +1370,7 @@
 						let str = '';
 						str += 
 							'<div class="modal_content1" id="indexListAjax4">'+
-							'회원님의 입찰신청 가격은 : '+ result.nextPrice +' 입니다.'+'<br>'+
+							'회원님의 입찰신청 가격은 : ' + '$' + result.nextPrice +' 입니다.'+'<br>'+
 							'입찰하시겠습니까?'
 							+'</div>';
 							$('#tabl4').html(str);
@@ -1351,6 +1381,9 @@
 						//location.reload() //새로고침 코드
 						
 						}
+					else if(result.bidPossible == false){
+						alert("경매시작전 입니다.")
+					}
 					else {
 						alert("보유계좌에 잔액이 부족합니다.");
 						
@@ -1376,17 +1409,43 @@
 						let str = '';
 						str += 
 							'<div class="modal_content1" id="indexListAjax4">'+
-							'회원님의 입찰신청 가격은 : '+ result.nextPrice +' 입니다.'+'<br>'+
+							'회원님의 입찰신청 가격은 : ' + '$' + result.nextPrice +' 입니다.'+'<br>'+
 							'입찰하시겠습니까?'
 							+'</div>';
 							$('#tabl4').html(str);
 							$("#nextPrice").val(result.nextPrice);
 						//location.reload() //새로고침 코드
-						
 						}
+					else if(result.bidPossible == false){
+						alert("경매시작전 입니다.")
+					}
 					else {
 						alert("보유계좌에 잔액이 부족합니다.");
 						
+					}
+					
+				},
+				error : function () {
+					console.log("error");
+				}
+    		});
+    });
+    $('.product-seller .sel_btn').click(function () {
+    	let sellerLikeState = $("#sellerLikeState").val();
+    		$.ajax({
+    			type: 'POST',
+				url: '<c:url value="/sellerLike"></c:url>',
+				data: JSON.stringify(sellerLikeState),
+				dataType:"JSON",
+				contentType:"application/json; charset=UTF-8",
+				success: function(result){
+					if(result.res){
+						alert("'판매자를 좋아요'를 했습니다.")
+						$("#sellerLikeState").val(result.sellerLikeState);
+						}
+					else if(result.res == false){
+						alert("'판매자를 좋아요'를 취소했습니다.")
+						$("#sellerLikeState").val(result.sellerLikeState);
 					}
 					
 				},
@@ -1425,5 +1484,40 @@
       document.removeEventListener("mouseup", releasePopup);
     }
     </script>
+<script src="<c:url value='/resources/js/jquery.validate.min.js'></c:url>"></script>
+<script src="<c:url value='/resources/js/additional-methods.min.js'></c:url>"></script>
+<script src="<c:url value='/resources/js/jquery-ui.min.js'></c:url>"></script>
+<script>
+	$('.message').validate({
+		rules:{
+			me_title : {
+				required : true,
+				regex : /^[a-zA-Z][a-zA-Z0-9!@#$]{4,12}$/
+			},
+			me_content : {
+				required : true,
+				regex : /^[a-zA-Z][a-zA-Z0-9!@#$]{4,12}$/
+			}
+		},
+		messages:{
+			me_title : {
+				required : '필수 항목입니다.',
+				regex : '아이디는 영문자로 시작하며, 영문,숫자,!@#$를 이용하여 5~13까지 가능합니다.'
+			},
+			me_content : {
+				required : '필수 항목입니다.',
+				regex : '비번은 영문,숫자,!@#$를 이용하여 8~20까지 가능합니다.'
+			}
+		}
+	});
+	$.validator.addMethod(
+		"regex",
+		function(value, element, regexp) {
+			var re = new RegExp(regexp);
+			return this.optional(element) || re.test(value);
+		},
+		"Please check your input."
+	);
+</script>
 </body>
 </html>

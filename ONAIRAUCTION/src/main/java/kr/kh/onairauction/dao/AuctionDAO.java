@@ -3,6 +3,7 @@ package kr.kh.onairauction.dao;
 import java.util.ArrayList;
 import org.apache.ibatis.annotations.Param;
 
+import kr.kh.onairauction.vo2.SellerLikeVO;
 import kr.kh.onairauction.vo2.AuctionRecordVO;
 import kr.kh.onairauction.vo2.AuctionVO;
 import kr.kh.onairauction.vo2.MemberVO;
@@ -21,7 +22,7 @@ public interface AuctionDAO {
 	
 	int insertMessage(@Param("m")MessageVO note);
 	
-	ArrayList<AuctionRecordVO> selectAuctionRecord();
+	ArrayList<AuctionRecordVO> selectAuctionRecord(int auctionNum);
 
 	MemberVO selectMember(String id); //나중에 삭제
 
@@ -36,4 +37,10 @@ public interface AuctionDAO {
 	ProductVO selectProduct(int productCode);
 
 	MemberVO selectSeller(String sellerId);
+
+	SellerLikeVO selectSellerLike(@Param("userId")String userId, @Param("sellerId")String sellerId);
+
+	void insertSellerLike(@Param("userId")String userId, @Param("sellerId")String sellerId, @Param("num")int num);
+
+	void updateSellerLike(@Param("s")SellerLikeVO table, @Param("sellerLikeState")int sellerLikeState);
 }
