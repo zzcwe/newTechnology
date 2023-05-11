@@ -655,7 +655,7 @@
     .modal_layer5 .modal_content3 {
         display: block;
         width:600px;
-        height: 600px;
+        height: 650px;
         background:#fff;
         border:1px solid #666;
         box-sizing: border-box;
@@ -742,8 +742,10 @@
 <body>
     <div class="body">
         <div class="box left">
-            <h1 class="title">Bonhams auction catalogue Gipsy Moth III Brochure 1981 Sale
-            </h1>
+        	<div style="height: 37px;">
+	            <h1 class="title"> ${auctionProduct.pr_name}
+	            </h1>
+            </div>
             <div class="swiper-body">
                 <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2">
                   <div class="swiper-wrapper">
@@ -856,6 +858,9 @@
                     <strong>Item ID</strong>
                     <span>${auctionProduct.pr_code}</span>
                     <a href="#" class="all_icon" style="cursor: pointer;"></a>
+                    <button class="share_btn" id="modal_open_btn">
+                        <span class="all_icon"></span>
+                    </button>
                     <button class="like_btn">
                         <span class="all_icon"></span>
                     </button>
@@ -955,6 +960,31 @@
         </div>
     </div> 
     
+    <div class="modal_layer">
+        <div id="modal">
+            <div class="modal_content">
+              <div class="box box1">
+                <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA3MjBfMjU2%2FMDAxNjU4Mjc5MzYwNjcw.5MVjAvre4v-ACGC7cXELJOcBA0x20xDAcxHRHJOnJY8g.8kbITvud_Ao-IhT6bEtBv95FpwSbTkZb4GiDDKukKzgg.PNG.smcho2002%2F1.png&type=sc960_832" alt="">
+                <a href="#"></a>
+              </div>
+              <div class="box box2">
+                <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA1MzFfNjYg%2FMDAxNjIyNDY0NjMwMzg4.hY-FUGvamGoj-AcXRHGKyhdQKYehRu7Bx-nYcIlibd4g.tTMZBZsCS1nfVFlz6-uyb7u656Gf06y4mYhGzlzOwusg.PNG.futurara%2F5.png&type=sc960_832" alt="">
+                <a href="#"></a>
+              </div>
+              <div class="box box3">
+                <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODA0MjVfMjgx%2FMDAxNTI0NjMzMTk5MTg5.LPGkH3KNG5zS5J3abfWHuCu8EXoA24cbNAcexLuWmgMg.9OJE4qEVGIG7PhfciJSB-pWbbbHHjkja-vzrxb5qfl4g.PNG.dc-club%2F%25C0%25CE%25BD%25BA%25C5%25B8%25B1%25D7%25B7%25A5.png&type=sc960_832" alt="">
+                <a href="#"></a>
+              </div>
+              <div class="box box4">
+                <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F293%2F2018%2F11%2F30%2F0000023210_001_20181130102430310.jpg&type=sc960_832" alt="">
+                <a href="#"></a>
+              </div>
+            </div>
+            <button type="submit" id="modal_copy_btn">링크 복사하기</button>
+            <button type="button" id="modal_close_btn">공유 취소하기</button>
+        </div>
+    </div>
+    
     <div class="modal_layer modal_layer1">
         <div id="modal">
         	<div id="tabl4">
@@ -1033,7 +1063,8 @@
         </div>
     </form>
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
-    <input type="hidden" id="sellerLikeState" value="${likeState}">
+    <input type="hidden" id="sellerLikeState" value="${sellerLikeState}">
+    <input type="hidden" id="productLikeState" value="${productLikeState}">
 	<div id="myPopup" class="popup">
       <div class="popup-content" onmousedown="dragPopup(event)">
         <div class="close-popup">
@@ -1070,7 +1101,8 @@
       </div>
     </div>	
     ${lastAuctionRecord.getAr_next_bid_price()}
-    ${likeState}
+    ${sellerLikeState}
+    ${productLikeState}
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
@@ -1121,13 +1153,11 @@
     $(document).ready(function(){ 
     	let sellerLikeState = $("#sellerLikeState").val();
 
-        if(sellerLikeState == 1){
+        if(sellerLikeState == 1){ // == 는 값만 같아도 같다고 인식, === 는 값과 타입 모두 같아야 같다고 인식
             $('.sel_btn span').prop('id','heart1');
         }else if(sellerLikeState == 0){
             $('.sel_btn span').prop('id','');
         }
-        
-        console.log($('.sel_btn span').prop('id'));
     });
     $(document).ready(function(){ 
 	    $('.product-seller .sel_btn').click(function(){
@@ -1137,30 +1167,21 @@
 	        }else{ 
 	            identify = false;
 	        }
-	        console.log(identify);
-	        
 	        if(identify){
 	            $('.sel_btn span').prop('id','heart1');
 	        }else{
 	            $('.sel_btn span').prop('id','');
 	        }
-	        console.log($('.sel_btn span').prop('id'));
 	    });
     });
-  
-    $(document).ready(function(){
-    	$('.sel_btn span').click(function(){
-	        let sellerLikeState = $("#sellerLikeState").val();
+    $(document).ready(function(){ 
+    	let productLikeState = $("#productLikeState").val();
 
-	        if(sellerLikeState === 0){
-	        	//$('.sel_btn span').prop('id','');
-	            $('.sel_btn span').prop('id','heart1');
-	        }else if(sellerLikeState === 1){
-	        	//$('.sel_btn span').prop('id','');
-	            $('.sel_btn span').prop('id','');
-	        }
-	        console.log($('.sel_btn span').prop('id'));
-    	});
+        if(productLikeState == 1){ // == 는 값만 같아도 같다고 인식, === 는 값과 타입 모두 같아야 같다고 인식
+            $('.like_btn span').attr('id','heart2');
+        }else if(productLikeState == 0){
+            $('.like_btn span').removeAttr('id');
+        }
     });
 	$(document).ready(function(){
 	    $('.itemid .like_btn').click(function(){
@@ -1170,8 +1191,6 @@
 	        }else{ 
 	            identify = false;
 	        }
-	        console.log(identify);
-	        
 	        if(identify){
 	            $('.like_btn span').attr('id','heart2');
 	        }else{
@@ -1179,6 +1198,24 @@
 	        }
 	    });  
     });
+	$(function(){
+	    const modal1 = document.querySelector('.modal_layer')
+	    function modalOn() {
+	    modal1.style.display = "flex"
+	    }
+	    function modalOff() {
+	    modal1.style.display = "none"
+	    }
+
+	    const btnModal = document.getElementById("modal_open_btn")
+	    btnModal.addEventListener("click", e => {
+	    modalOn()
+		})
+	    const closeBtn = modal1.querySelector("#modal_close_btn")
+	    closeBtn.addEventListener("click", e => {
+	    modalOff()
+		})
+	})
     $(function(){
         const modal1 = document.querySelector('.modal_layer1')
         function modalOn() {
@@ -1375,7 +1412,7 @@
 							+'</div>';
 							$('#tabl4').html(str);
 							$("#nextPrice").val(result.nextPrice);
-							//idcheck = 12; 변수타입 let, var 설정안해줘도 값 저장됨
+							//idcheck = 12; 와 같이 변수타입 let, var 설정안해줘도 값 저장됨
 							//console.log(idcheck);
 							
 						//location.reload() //새로고침 코드
@@ -1440,12 +1477,36 @@
 				contentType:"application/json; charset=UTF-8",
 				success: function(result){
 					if(result.res){
-						alert("'판매자를 좋아요'를 했습니다.")
+						alert("'판매자 좋아요'를 했습니다.")
 						$("#sellerLikeState").val(result.sellerLikeState);
 						}
 					else if(result.res == false){
-						alert("'판매자를 좋아요'를 취소했습니다.")
+						alert("'판매자 좋아요'를 취소했습니다.")
 						$("#sellerLikeState").val(result.sellerLikeState);
+					}
+					
+				},
+				error : function () {
+					console.log("error");
+				}
+    		});
+    });
+    $('.itemid .like_btn').click(function () {
+    	let productLikeState = $("#productLikeState").val();
+    		$.ajax({
+    			type: 'POST',
+				url: '<c:url value="/productLike"></c:url>',
+				data: JSON.stringify(productLikeState),
+				dataType:"JSON",
+				contentType:"application/json; charset=UTF-8",
+				success: function(result){
+					if(result.res){
+						alert("'상품 좋아요'를 했습니다.")
+						$("#productLikeState").val(result.productLikeState);
+						}
+					else if(result.res == false){
+						alert("'상품 좋아요'를 취소했습니다.")
+						$("#productLikeState").val(result.productLikeState);
 					}
 					
 				},

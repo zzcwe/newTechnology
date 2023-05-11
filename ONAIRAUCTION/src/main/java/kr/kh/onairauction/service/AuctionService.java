@@ -9,6 +9,7 @@ import kr.kh.onairauction.vo2.AuctionVO;
 import kr.kh.onairauction.vo2.MemberVO;
 import kr.kh.onairauction.vo2.MembershipLevelVO;
 import kr.kh.onairauction.vo2.MessageVO;
+import kr.kh.onairauction.vo2.ProductLikeVO;
 import kr.kh.onairauction.vo2.ProductVO;
 import kr.kh.onairauction.vo2.ReportCategoryVO;
 import kr.kh.onairauction.vo2.ReportVO;
@@ -45,4 +46,10 @@ public interface AuctionService {
 	void insertSellerLike(String userId, String sellerId, int num);
 
 	void updateSellerLike(String userId, String sellerId, int sellerLikeState);
+
+	ProductLikeVO selectProductLike(int productCode, String userId);
+
+	void insertProductLike(int productCode, String userId, int num);
+
+	void updateProductLike(int productCode, String userId, int productLikeState);
 }

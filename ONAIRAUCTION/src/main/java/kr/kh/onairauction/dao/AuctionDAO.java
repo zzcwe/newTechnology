@@ -9,6 +9,7 @@ import kr.kh.onairauction.vo2.AuctionVO;
 import kr.kh.onairauction.vo2.MemberVO;
 import kr.kh.onairauction.vo2.MembershipLevelVO;
 import kr.kh.onairauction.vo2.MessageVO;
+import kr.kh.onairauction.vo2.ProductLikeVO;
 import kr.kh.onairauction.vo2.ProductVO;
 import kr.kh.onairauction.vo2.ReportCategoryVO;
 import kr.kh.onairauction.vo2.ReportVO;
@@ -43,4 +44,10 @@ public interface AuctionDAO {
 	void insertSellerLike(@Param("userId")String userId, @Param("sellerId")String sellerId, @Param("num")int num);
 
 	void updateSellerLike(@Param("s")SellerLikeVO table, @Param("sellerLikeState")int sellerLikeState);
+
+	ProductLikeVO selectProductLike(@Param("productCode")int productCode, @Param("userId")String userId);
+
+	void insertProductLike(@Param("productCode")int productCode, @Param("userId")String userId, @Param("num")int num);
+
+	void updateProductLike(@Param("p")ProductLikeVO table, @Param("productLikeState")int productLikeState);
 }

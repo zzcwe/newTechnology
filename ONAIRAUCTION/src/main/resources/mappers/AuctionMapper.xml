@@ -54,5 +54,19 @@
   			where
   				sl_me_id = #{s.sl_me_id} and sl_seller_id = #{s.sl_seller_id}
   	</update>
+  	<select id="selectProductLike" resultType="kr.kh.onairauction.vo2.ProductLikeVO">
+  		select * from product_like where pl_pr_code = #{productCode} and pl_me_id = #{userId}
+  	</select>
+  	<insert id="insertProductLike">
+	  	insert into product_like(pl_pr_code, pl_me_id, pl_state)
+	  		values(#{productCode}, #{userId}, #{num})
+  	</insert>
+  	<update id="updateProductLike">
+  		update product_like
+  			set
+  				pl_state = #{productLikeState}
+  			where
+  				pl_pr_code = #{p.pl_pr_code} and pl_me_id = #{p.pl_me_id}
+  	</update>
   	
 </mapper>

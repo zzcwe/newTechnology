@@ -13,6 +13,7 @@ import kr.kh.onairauction.vo2.AuctionVO;
 import kr.kh.onairauction.vo2.MemberVO;
 import kr.kh.onairauction.vo2.MembershipLevelVO;
 import kr.kh.onairauction.vo2.MessageVO;
+import kr.kh.onairauction.vo2.ProductLikeVO;
 import kr.kh.onairauction.vo2.ProductVO;
 import kr.kh.onairauction.vo2.ReportCategoryVO;
 import kr.kh.onairauction.vo2.ReportVO;
@@ -133,6 +134,25 @@ public class AuctionServiceImp implements AuctionService {
 			auctionDAO.updateSellerLike(table, sellerLikeState);
 		}else if(table.getSl_state() == 1) {
 			auctionDAO.updateSellerLike(table, sellerLikeState);
+		}
+		
+	}
+	@Override
+	public ProductLikeVO selectProductLike(int productCode, String userId) {
+		return auctionDAO.selectProductLike(productCode, userId);
+	}
+	@Override
+	public void insertProductLike(int productCode, String userId, int num) {
+		auctionDAO.insertProductLike(productCode, userId, num);
+		
+	}
+	@Override
+	public void updateProductLike(int productCode, String userId, int productLikeState) {
+		ProductLikeVO table = auctionDAO.selectProductLike(productCode, userId);
+		if(table.getPl_state() == 0) {
+			auctionDAO.updateProductLike(table, productLikeState);
+		}else if(table.getPl_state() == 1) {
+			auctionDAO.updateProductLike(table, productLikeState);
 		}
 		
 	}

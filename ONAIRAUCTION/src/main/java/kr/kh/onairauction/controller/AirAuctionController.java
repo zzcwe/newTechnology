@@ -22,6 +22,7 @@ import kr.kh.onairauction.vo2.AuctionVO;
 import kr.kh.onairauction.vo2.MemberVO;
 import kr.kh.onairauction.vo2.MembershipLevelVO;
 import kr.kh.onairauction.vo2.MessageVO;
+import kr.kh.onairauction.vo2.ProductLikeVO;
 import kr.kh.onairauction.vo2.ProductVO;
 import kr.kh.onairauction.vo2.ReportCategoryVO;
 import kr.kh.onairauction.vo2.ReportVO;
@@ -43,7 +44,6 @@ public class AirAuctionController {
 		MemberVO sessionUser = auctionService.getUser("taehwan");//나중에 지울 코드
 		session.setAttribute("auction", sessionAuction);//나중에 지울 코드
 		session.setAttribute("user", sessionUser);//나중에 지울 코드
-		System.out.println(sessionUser);
 		//경매번호와 유저정보가 넘어온다고 가정
 		// 1. 세션에 있는 경매번호와 사용자를 받아 서버와 mv에 저장해준다. 
 		AuctionVO auction = (AuctionVO)session.getAttribute("auction");
@@ -66,25 +66,34 @@ public class AirAuctionController {
 		int lastAuctionRecordIndex = auctionRecordList.size()-1;
 		AuctionRecordVO lastAuctionRecord = auctionRecordList.get(lastAuctionRecordIndex);
 		mv.addObject("lastAuctionRecord", lastAuctionRecord);
-		SellerLikeVO likeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
-		if(likeState == null) {
+		SellerLikeVO sellerLikeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
+		if(sellerLikeState == null) {
 			auctionService.insertSellerLike(user.getMe_id(), auctionSeller.getMe_id(), 0);
-			likeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
-			int state = likeState.getSl_state();
-			mv.addObject("likeState",state);
-		}else if(likeState != null) {
-			int state = likeState.getSl_state();
-			mv.addObject("likeState",state);
+			sellerLikeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
+			int state = sellerLikeState.getSl_state();
+			mv.addObject("sellerLikeState",state);
+		}else if(sellerLikeState != null) {
+			int state = sellerLikeState.getSl_state();
+			mv.addObject("sellerLikeState",state);
 		}
-		System.out.println(likeState);
+		ProductLikeVO productLikeState = auctionService.selectProductLike(auctionProduct.getPr_code(), user.getMe_id());
+		if(productLikeState == null) {
+			auctionService.insertProductLike(auctionProduct.getPr_code(), user.getMe_id(), 0);
+			productLikeState = auctionService.selectProductLike(auctionProduct.getPr_code(), user.getMe_id());
+			int state = productLikeState.getPl_state();
+			mv.addObject("productLikeState",state);
+		}else if(productLikeState != null) {
+			int state = productLikeState.getPl_state();
+			mv.addObject("productLikeState",state);
+		}
 		return mv;
 		//DB에 저장되어 있는 데이터 - 구매자, 판매자, 상품, 경매, 경매카테고리, 경매기록(처음 하나의 기록), 신고카테고리
 		
 	}
-	@RequestMapping(value = "/auctionRecord", method=RequestMethod.GET)
+	@RequestMapping(value = "/auctionRecord", method=RequestMethod.GET) //나중에 삭제
 	public ArrayList<AuctionRecordVO> getAuctionRecord() {
 		ArrayList<AuctionRecordVO> list = auctionService.selectAuctionRecord(1);
-		return list; //나중에 삭제
+		return list; 
 	}
 	
 	@RequestMapping(value = "/report", method=RequestMethod.POST)
@@ -127,11 +136,9 @@ public class AirAuctionController {
 		int auctionNum = auction.getAu_num();
 		Date auctionOpenTime = auction.au_start_date;
 		Date serverTime = new Date();
-		boolean bidPossible2 = auctionOpenTime.after(serverTime);//OpenTime이 serverTime을 지났으면 true
+		boolean bidPossible2 = auctionOpenTime.before(serverTime);//OpenTime이 serverTime 이전이면 true
 		boolean bidPossible = auctionService.timeChange(auctionOpenTime, serverTime);
 		//경매시작시간이 되기전에 입찰하기 안되게 코드짜기
-		System.out.println(bidPossible);
-		System.out.println(bidPossible2);
 		if(bidPossible) {
 			boolean res = auctionService.insertBid(price, expense, userAccount, user, auctionNum);
 			System.out.println(res);
@@ -156,19 +163,45 @@ public class AirAuctionController {
 		String userId = user.getMe_id();
 		MemberVO seller = (MemberVO)session.getAttribute("auctionSeller");
 		String sellerId = seller.getMe_id();
+		boolean res;
 		if(sellerLikeState == 0) {
 			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
 			sellerLikeState = 1;
 			auctionService.updateSellerLike(userId, sellerId, sellerLikeState);
-			boolean res = true;
+			res = true;
 			map.put("sellerLikeState", sellerLikeState);
 			map.put("res", res);
 		}else if(sellerLikeState == 1) {
 			//반대로 0으로
 			sellerLikeState = 0;
 			auctionService.updateSellerLike(userId, sellerId, sellerLikeState);
-			boolean res = false;
+			res = false;
 			map.put("sellerLikeState",sellerLikeState);
+			map.put("res", res);
+		}
+		return map;
+	}
+	@RequestMapping(value = "/productLike", method=RequestMethod.POST)
+	public Map<String, Object> productLike(@RequestBody int productLikeState, HttpSession session){
+		Map<String, Object> map = new HashMap<String, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		String userId = user.getMe_id();
+		ProductVO product = (ProductVO)session.getAttribute("auctionProduct");
+		int productCode = product.getPr_code();
+		boolean res;
+		if(productLikeState == 0) {
+			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
+			productLikeState = 1;
+			auctionService.updateProductLike(productCode, userId, productLikeState);
+			res = true;
+			map.put("productLikeState", productLikeState);
+			map.put("res", res);
+		}else if(productLikeState == 1) {
+			//반대로 0으로
+			productLikeState = 0;
+			auctionService.updateProductLike(productCode, userId, productLikeState);
+			res = false;
+			map.put("productLikeState", productLikeState);
 			map.put("res", res);
 		}
 		return map;
