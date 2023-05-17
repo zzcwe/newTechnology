@@ -1,6 +1,7 @@
 package kr.kh.onairauction.controller;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 import kr.kh.onairauction.service.AuctionService;
@@ -35,10 +38,11 @@ public class AirAuctionController {
 	AuctionService auctionService;
 	
 	
-	@RequestMapping(value = "/", method=RequestMethod.GET)
-	public ModelAndView home(ModelAndView mv, HttpSession session) {
+	@RequestMapping(value = "/onairauction/detail", method=RequestMethod.GET)// /{au_num}
+	public ModelAndView home(ModelAndView mv, HttpSession session/*, @PathVariable("au_num")int au_num*/) {
 		mv.setViewName("/auction/home");
 		//
+		//AuctionVO sessionAuction = auctionService.select
 		//
 		AuctionVO sessionAuction = auctionService.getAuction("seller");//나중에 지울 코드
 		MemberVO sessionUser = auctionService.getUser("taehwan");//나중에 지울 코드
@@ -67,33 +71,28 @@ public class AirAuctionController {
 		AuctionRecordVO lastAuctionRecord = auctionRecordList.get(lastAuctionRecordIndex);
 		mv.addObject("lastAuctionRecord", lastAuctionRecord);
 		SellerLikeVO sellerLikeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
-		if(sellerLikeState == null) {
+		if(sellerLikeState == null && user != null) {
 			auctionService.insertSellerLike(user.getMe_id(), auctionSeller.getMe_id(), 0);
 			sellerLikeState = auctionService.selectSellerLike(user.getMe_id(), auctionSeller.getMe_id());
 			int state = sellerLikeState.getSl_state();
 			mv.addObject("sellerLikeState",state);
-		}else if(sellerLikeState != null) {
+		}else if(sellerLikeState != null && user != null) {
 			int state = sellerLikeState.getSl_state();
 			mv.addObject("sellerLikeState",state);
 		}
 		ProductLikeVO productLikeState = auctionService.selectProductLike(auctionProduct.getPr_code(), user.getMe_id());
-		if(productLikeState == null) {
+		if(productLikeState == null && user != null) {
 			auctionService.insertProductLike(auctionProduct.getPr_code(), user.getMe_id(), 0);
 			productLikeState = auctionService.selectProductLike(auctionProduct.getPr_code(), user.getMe_id());
 			int state = productLikeState.getPl_state();
 			mv.addObject("productLikeState",state);
-		}else if(productLikeState != null) {
+		}else if(productLikeState != null && user != null) {
 			int state = productLikeState.getPl_state();
 			mv.addObject("productLikeState",state);
 		}
 		return mv;
 		//DB에 저장되어 있는 데이터 - 구매자, 판매자, 상품, 경매, 경매카테고리, 경매기록(처음 하나의 기록), 신고카테고리
 		
-	}
-	@RequestMapping(value = "/auctionRecord", method=RequestMethod.GET) //나중에 삭제
-	public ArrayList<AuctionRecordVO> getAuctionRecord() {
-		ArrayList<AuctionRecordVO> list = auctionService.selectAuctionRecord(1);
-		return list; 
 	}
 	
 	@RequestMapping(value = "/report", method=RequestMethod.POST)
@@ -105,14 +104,15 @@ public class AirAuctionController {
 	@RequestMapping(value = "/message", method=RequestMethod.POST)
 	public ModelAndView message(ModelAndView mv, MessageVO message) {
 		boolean register = auctionService.insertMessage(message);
-		System.out.println(register);
 		mv.setViewName("redirect:/");
 		return mv;
 	}
 	@RequestMapping(value = "/ajaxData", method = RequestMethod.GET)
-	public ModelAndView ajaxData(ModelAndView mv,HttpSession session) {
+	public ModelAndView ajaxData(ModelAndView mv,HttpSession session) throws ParseException {
 		mv.setViewName("auction/ajaxdata");
-		ArrayList<AuctionRecordVO> auctionRecordList = auctionService.selectAuctionRecord(1);
+		AuctionVO sessionAuction = auctionService.getAuction("seller");//나중에 지울 코드
+		MemberVO sessionUser = auctionService.getUser("taehwan");//나중에 지울 코드
+		ArrayList<AuctionRecordVO> auctionRecordList = auctionService.selectAuctionRecord(sessionAuction.getAu_num());
 		int lastAuctionRecordIndex = auctionRecordList.size()-1;
 		AuctionRecordVO lastAuctionRecord = auctionRecordList.get(lastAuctionRecordIndex);
 		Date nowTime = new Date();
@@ -121,11 +121,14 @@ public class AirAuctionController {
 		mv.addObject("nowTime", now);
 		mv.addObject("auctionRecordList", auctionRecordList);
 		mv.addObject("lastAuctionRecord", lastAuctionRecord);
+		String end = auctionService.endTime(lastAuctionRecord, sessionAuction);
+		mv.addObject("endTime", end);
 		return mv;
 	}
-	@RequestMapping(value = "/auctionBid", method=RequestMethod.POST)
-	public Map<String, Object> auctionBid(@RequestBody Double price, HttpSession session){
+	@RequestMapping(value = "/auctionBid", method=RequestMethod.POST) //1. 입찰종료 되었을 때, 입찰막기 추가해야함 //2. 새로운입찰이 들어왔을 때, 판매종료시간 리셋해야함
+	public Map<String, Object> auctionBid(@RequestBody double price, HttpSession session){
 		Map<String, Object> map = new HashMap<String, Object>();
+		System.out.println(price);
 		MemberVO user = (MemberVO)session.getAttribute("user");
 		String id = user.getMe_id();
 		VirtualAccountVO userAccount = auctionService.selectAccount(id);
@@ -136,19 +139,23 @@ public class AirAuctionController {
 		int auctionNum = auction.getAu_num();
 		Date auctionOpenTime = auction.au_start_date;
 		Date serverTime = new Date();
-		boolean bidPossible2 = auctionOpenTime.before(serverTime);//OpenTime이 serverTime 이전이면 true
+		//boolean bidPossible2 = auctionOpenTime.before(serverTime);//OpenTime이 serverTime 이전이면 true
 		boolean bidPossible = auctionService.timeChange(auctionOpenTime, serverTime);
-		//경매시작시간이 되기전에 입찰하기 안되게 코드짜기
+		//경매시작시간이 되기전에 입찰하기 안되게 코드짜기 
 		if(bidPossible) {
 			boolean res = auctionService.insertBid(price, expense, userAccount, user, auctionNum);
 			System.out.println(res);
 			map.put("res", res);
 			AuctionRecordVO record = new AuctionRecordVO();
 			double nextPrice = record.getAr_next_bid_price(price);
-			System.out.println(nextPrice);
 			map.put("nextPrice", nextPrice);
 		}
 		map.put("bidPossible", bidPossible);
+		return map;
+	}
+	@RequestMapping(value = "/countDown", method=RequestMethod.POST)
+	public Map<String, Object> countDown(@RequestBody int num){
+		Map<String, Object> map = new HashMap<String, Object>();
 		return map;
 	}
 	@RequestMapping(value = "/userStore", method=RequestMethod.GET)
@@ -163,22 +170,8 @@ public class AirAuctionController {
 		String userId = user.getMe_id();
 		MemberVO seller = (MemberVO)session.getAttribute("auctionSeller");
 		String sellerId = seller.getMe_id();
-		boolean res;
-		if(sellerLikeState == 0) {
-			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
-			sellerLikeState = 1;
-			auctionService.updateSellerLike(userId, sellerId, sellerLikeState);
-			res = true;
-			map.put("sellerLikeState", sellerLikeState);
-			map.put("res", res);
-		}else if(sellerLikeState == 1) {
-			//반대로 0으로
-			sellerLikeState = 0;
-			auctionService.updateSellerLike(userId, sellerId, sellerLikeState);
-			res = false;
-			map.put("sellerLikeState",sellerLikeState);
-			map.put("res", res);
-		}
+		map = auctionService.sellerLike(sellerLikeState, userId, sellerId);
+		System.out.println(map);
 		return map;
 	}
 	@RequestMapping(value = "/productLike", method=RequestMethod.POST)
@@ -188,22 +181,8 @@ public class AirAuctionController {
 		String userId = user.getMe_id();
 		ProductVO product = (ProductVO)session.getAttribute("auctionProduct");
 		int productCode = product.getPr_code();
-		boolean res;
-		if(productLikeState == 0) {
-			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
-			productLikeState = 1;
-			auctionService.updateProductLike(productCode, userId, productLikeState);
-			res = true;
-			map.put("productLikeState", productLikeState);
-			map.put("res", res);
-		}else if(productLikeState == 1) {
-			//반대로 0으로
-			productLikeState = 0;
-			auctionService.updateProductLike(productCode, userId, productLikeState);
-			res = false;
-			map.put("productLikeState", productLikeState);
-			map.put("res", res);
-		}
+		map = auctionService.productLike(productCode, userId, productLikeState);
+		System.out.println(map);
 		return map;
 	}
 	

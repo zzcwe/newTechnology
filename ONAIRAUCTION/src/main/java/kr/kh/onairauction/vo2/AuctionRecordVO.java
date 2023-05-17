@@ -1,5 +1,6 @@
 package kr.kh.onairauction.vo2;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import lombok.Data;
@@ -20,6 +21,7 @@ public String getAr_bid_time() {
 		}
 	return date.format(ar_bid_time);
  	}
+
 public double getAr_next_bid_price() {
 	double unit = 0;
 	if( ar_bid_price < 20){

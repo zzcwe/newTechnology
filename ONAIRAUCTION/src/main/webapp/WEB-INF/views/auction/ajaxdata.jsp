@@ -40,6 +40,16 @@
 	         </p>
 	     </li>
   	</ul>
+  	
+  	<dl id="indexListAjax7">
+      <dt>입찰가능시간</dt>
+      <dd class="korEndTime" style="font-weight: bold; color: green;">
+       	입찰시간은 ${endTime}에 종료됩니다.
+      </dd>
+    </dl>
+  	
+  	
+  	
     
 </body>
 </html>

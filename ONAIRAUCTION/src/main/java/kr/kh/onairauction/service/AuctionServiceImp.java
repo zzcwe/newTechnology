@@ -3,6 +3,8 @@ package kr.kh.onairauction.service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -82,7 +84,7 @@ public class AuctionServiceImp implements AuctionService {
 		return auctionDAO.selectAccount(id);
 	}
 	@Override
-	public AuctionVO getAuction(String id) { //나중에 삭제
+	public AuctionVO getAuction(String id) { 
 		
 		return auctionDAO.selectAuction(id);
 	}
@@ -101,8 +103,6 @@ public class AuctionServiceImp implements AuctionService {
 		SimpleDateFormat date = new SimpleDateFormat("yyMMddHHmmss");
 		String auctionOpenTime = date.format(a);
 		String now = date.format(b);
-		System.out.println(auctionOpenTime);
-		System.out.println(now);
 		//a와 b를 비교해서 a가 더 크면 false, b가 더 크면 true를 리턴
 		try{
             long number1 = Long.parseLong(auctionOpenTime);
@@ -155,6 +155,91 @@ public class AuctionServiceImp implements AuctionService {
 			auctionDAO.updateProductLike(table, productLikeState);
 		}
 		
+	}
+	@Override
+	public String endTime(AuctionRecordVO lastRecord, AuctionVO auction) {
+		String dateStr = lastRecord.getAr_bid_time();
+		SimpleDateFormat date1 = new SimpleDateFormat("HH:mm:ss");
+		dateStr = dateStr.replaceAll("[^0-9]", "");
+		dateStr = dateStr.substring(8);
+		int number = Integer.parseInt(dateStr);
+		int time = auction.getAu_limit_bid_time();
+		int sum = number + time;
+		int second = sum % 100;
+		int min = sum / 100 % 100;
+		int hour = sum / 10000 % 100;
+		if(second >= 60) {
+			second = second - 60;
+			min = min + 1;
+		}
+		if(min >= 60) {
+			min = min - 60;
+			hour = hour + 1;
+		}
+		if(hour >= 24) {
+			hour = 100;
+		}
+		sum = second + min*100 + hour*10000;
+		dateStr = dateStr.valueOf(sum);
+		if(dateStr.length() == 7) {
+			dateStr = dateStr.substring(1);
+		}
+		StringBuffer bd = new StringBuffer();
+		bd.append(dateStr);
+		if(bd.length() == 5) {
+			bd.insert(1, "시");
+			bd.insert(4, "분");
+			bd.insert(7, "초");
+		}
+		if(bd.length() == 6) {
+			bd.insert(2, "시");
+			bd.insert(5, "분");
+			bd.insert(8, "초");
+		}
+		dateStr = bd.substring(0);
+		return dateStr;
+	}
+	@Override
+	public Map<String, Object> sellerLike(int sellerLikeState, String userId, String sellerId) {
+		boolean res;
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(sellerLikeState == 0) {
+			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
+			sellerLikeState = 1;
+			updateSellerLike(userId, sellerId, sellerLikeState);
+			res = true;
+			map.put("sellerLikeState", sellerLikeState);
+			map.put("res", res);
+		}else if(sellerLikeState == 1) {
+			//반대로 0으로
+			sellerLikeState = 0;
+			updateSellerLike(userId, sellerId, sellerLikeState);
+			res = false;
+			map.put("sellerLikeState",sellerLikeState);
+			map.put("res", res);
+		}
+		return map;
+	}
+	@Override
+	public Map<String, Object> productLike(int productCode, String userId, int productLikeState) {
+		boolean res;
+		Map<String, Object> map = new HashMap<String, Object>();
+		if(productLikeState == 0) {
+			//판매자좋아요테이블에서 상태를 1로 바꿔주고 map.put("sellerLike",sl_state)
+			productLikeState = 1;
+			updateProductLike(productCode, userId, productLikeState);
+			res = true;
+			map.put("productLikeState", productLikeState);
+			map.put("res", res);
+		}else if(productLikeState == 1) {
+			//반대로 0으로
+			productLikeState = 0;
+			updateProductLike(productCode, userId, productLikeState);
+			res = false;
+			map.put("productLikeState", productLikeState);
+			map.put("res", res);
+		}
+		return map;
 	}
 	
 	

@@ -886,21 +886,22 @@
                         </dl>
                     </li>
                     <li>
-                        <dl>
-                            <dt>판매종료시간</dt>
-                            <dd class="korEndTime">
-                                <font class="leftTime"></font>
-                             	${auction.au_final_date}
-                            </dd>
-                        </dl>
+                    	<div id="tabl7">
+	                        <dl>
+	                            <dt>입찰가능시간</dt>
+	                            <dd class="korEndTime" style="font-weight: bold; color: green;">
+	                             	
+	                            </dd>
+	                        </dl>
+	                	</div>
                     </li>
                     <li>
                         <dl>
                             <dt class="dt1">물류센터 도착 예정일</dt>
                             <dd class="dd1" style="font-size: 14px">
-                                
+                                	
                                 <font class="fw 500" style="font-size: 16px">
-                                    ${auction.getAu_delivery_date()}
+                                   	입찰후 3일 이내
                                 </font>
                             </dd>
                         </dl>
@@ -1065,6 +1066,7 @@
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
     <input type="hidden" id="sellerLikeState" value="${sellerLikeState}">
     <input type="hidden" id="productLikeState" value="${productLikeState}">
+    <input type="hidden" id="countDown" value="">
 	<div id="myPopup" class="popup">
       <div class="popup-content" onmousedown="dragPopup(event)">
         <div class="close-popup">
@@ -1324,30 +1326,6 @@
             alert("쪽지가 전송되었습니다.")
         })
     })
-    $(function(){
-	    $('.history_btn').click(function ez() {
-			$.ajax({
-				type: 'GET',
-				url: '<c:url value="/auctionRecord"></c:url>',
-				dataType:"Text",
-				contentType:"application/json; charset=UTF-8",
-				success: function(result){
-					//var list변수를 만들고
-					var list = result
-					//for문을 통해서 str+= ''안에 저장
-					
-					//append를 통해 +
-					
-				},
-				error : function () {
-					console.log("error");
-				}
-				//complete: function() {
-					//setTimeout(ez, 1000);
-				//}
-			});
-		});
-    });
     
     $(function list(){ 
     	
@@ -1373,13 +1351,16 @@
 	    			$('#tabl3').html(text);
 	    			
 	    			var text2 = html.find("div#indexListAjax4").detach();
-	    			//$('#tabl4').html(text2);
+	    			$('#tabl4').html(text2);
 	    			
 	    			var text3 = html.find("ul#indexListAjax5").detach();
 	    			$('#tabl5').html(text3);
 	    			
 	    			var text4 = html.find("ul#indexListAjax6").detach();
 	    			$('#tabl6').html(text4);
+	    			
+	    			var text5 = html.find("dl#indexListAjax7").detach();
+	    			$('#tabl7').html(text5);
 	    			
 	    	}).fail(function (jqXHR, textStatus, errorThrown) {
 	    		console.log("에러");
@@ -1390,11 +1371,51 @@
 	    		setTimeout(list, 1000);
 	    	});
     	});
-    
-    
+    $(function countDown() {
+   
+    	let num =  $("#countDown").val(); //함수이름과 변수이름이 동일하면 변수이름지정 충돌이 생김 let countDown으로 설정시 에러남
+    	if(num > 0)
+    		$.ajax({
+    			type: 'POST',
+				url: '<c:url value="/countDown"></c:url>',
+				data: JSON.stringify(num),
+				dataType:"JSON",
+				contentType:"application/json; charset=UTF-8",
+				success: function(result){
+					let str= '';
+					str +=
+                    '<dl>'+
+                        '<dt>판매종료시간</dt>'+
+                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+                         	'입찰 시간은 '  + result.count + '에 종료됩니다.' +
+                        '</dd>'+
+                    '</dl>'
+					$('#tabl7').html(str);
+					$("#countDown").val(result.count);	
+				},
+				error : function () {
+					console.log("error");
+				}
+    		});
+    	else if(num == 0)
+    		$(function autctionEnd(){
+    		let str= '';
+			str +=
+            '<dl>'+
+                '<dt>판매종료시간</dt>'+
+                '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+                 	'경매가 종료되었습니다.' +
+                '</dd>'+
+            '</dl>'
+			$('#tabl7').html(str);
+    	});
+    });
     
     $('#modal_confirm_btn1').click(function () {
+    	
     	let price = $("#nextPrice").val();
+    	let num = ${auction.getAu_num()};
+    	if(num != 0)
     		$.ajax({
     			type: 'POST',
 				url: '<c:url value="/auctionBid"></c:url>',
@@ -1403,20 +1424,10 @@
 				contentType:"application/json; charset=UTF-8",
 				success: function(result){
 					if(result.res){
-						alert("입찰하였습니다.")
-						let str = '';
-						str += 
-							'<div class="modal_content1" id="indexListAjax4">'+
-							'회원님의 입찰신청 가격은 : ' + '$' + result.nextPrice +' 입니다.'+'<br>'+
-							'입찰하시겠습니까?'
-							+'</div>';
-							$('#tabl4').html(str);
-							$("#nextPrice").val(result.nextPrice);
-							//idcheck = 12; 와 같이 변수타입 let, var 설정안해줘도 값 저장됨
-							//console.log(idcheck);
-							
-						//location.reload() //새로고침 코드
 						
+							$("#nextPrice").val(result.nextPrice);
+							$("#countDown").val(result.bidTimeReset);
+							alert("입찰하였습니다.");
 						}
 					else if(result.bidPossible == false){
 						alert("경매시작전 입니다.")
@@ -1431,13 +1442,19 @@
 					console.log("error");
 				}
     		});
+    	if(num == 0)
+    		alert("종료된 경매이므로 입찰할 수 없습니다.")
     });
     $('#modal_double_btn1').click(function () {
-    	let price = $("#nextPrice").val() * 2;
+    	
+    	var formData = new FormData();
+    	formData.append('price', $("#nextPrice").val() * 2);
+    	formData.append('count', $("#countDown").val());
+    	
     		$.ajax({
     			type: 'POST',
 				url: '<c:url value="/auctionBid"></c:url>',
-				data: JSON.stringify(price),
+				data: JSON.stringify(formData), //두개이상보낼때는 json.stringify제거
 				dataType:"JSON",
 				contentType:"application/json; charset=UTF-8",
 				success: function(result){
@@ -1451,6 +1468,7 @@
 							+'</div>';
 							$('#tabl4').html(str);
 							$("#nextPrice").val(result.nextPrice);
+							$("#countDown").val(result.bidTimeReset);
 						//location.reload() //새로고침 코드
 						}
 					else if(result.bidPossible == false){

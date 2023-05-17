@@ -2,6 +2,7 @@ package kr.kh.onairauction.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 import kr.kh.onairauction.vo2.SellerLikeVO;
 import kr.kh.onairauction.vo2.AuctionRecordVO;
@@ -33,7 +34,7 @@ public interface AuctionService {
 
 	VirtualAccountVO selectAccount(String id);
 	
-	AuctionVO getAuction(String id); //나중에 삭제
+	AuctionVO getAuction(String id);
 
 	ProductVO selectProduct(int productCode);
 
@@ -52,4 +53,10 @@ public interface AuctionService {
 	void insertProductLike(int productCode, String userId, int num);
 
 	void updateProductLike(int productCode, String userId, int productLikeState);
+	
+	String endTime(AuctionRecordVO lastRecord, AuctionVO auction);
+	
+	Map<String, Object> sellerLike(int sellerLikeState, String userId, String sellerId);
+	
+	Map<String, Object> productLike(int productCode, String userId, int productLikeState);
 }

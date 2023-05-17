@@ -36,9 +36,10 @@ public String getAu_final_date() {
  	}
 
 public String getAu_delivery_date() {
-	SimpleDateFormat date1 = new SimpleDateFormat("yyyy-MM-dd" + "일 부터 3일이내");
-	return date1.format(au_final_date);
+	SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd" + "일 부터 3일이내");
+	return date.format(au_final_date);
 	}
+	
 }
 	
 	
