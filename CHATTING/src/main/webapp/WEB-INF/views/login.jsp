@@ -28,7 +28,8 @@
             <div class="panel-body">
                 <form id="login-form" method="post" action="<c:url value="/loginProcess.do"></c:url>">
                     <div>
-                        <input type="text"  name="id"	class="form-control" name="아이디 입력" placeholder="Username" autofocus>
+                        <input type="text"  name="userId"	class="form-control" placeholder="Username" autofocus>
+                        <input type="text"  name="roomNumber"	class="form-control" placeholder="Roomnumber" autofocus>
                     </div>
                     <div>
                         <button type="submit" class="form-control btn btn-primary">로그인</button>

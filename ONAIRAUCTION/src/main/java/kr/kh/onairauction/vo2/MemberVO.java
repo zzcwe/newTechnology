@@ -18,6 +18,8 @@ public class MemberVO {
 	int me_certification;
 	int me_authority;
 	String me_account;
+	int me_complation_number;
+	int me_reported_number;
 	Date me_join_time;
 	String me_region;
 	String me_trade_certification;

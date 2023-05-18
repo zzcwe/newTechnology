@@ -7,8 +7,7 @@ import lombok.Data;
 @Data
 public class RatingStandardVO {
 	String rs_ml_name;
-	int rs_complation_number;
-	int rs_report_numver;
+	String rs_standard_condition;
 }
 	
 	

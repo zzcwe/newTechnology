@@ -29,12 +29,13 @@ public class LoginController {
 	
 	
 	@RequestMapping(value = "/loginProcess.do", method = RequestMethod.POST)
-	public String loginProcess(@RequestParam String id, HttpServletRequest request) {
+	public String loginProcess(@RequestParam String userId, @RequestParam String roomNumber, HttpServletRequest request) {
 		
-		logger.info("Welcome "+id);
+		logger.info("Welcome "+userId+" to "+roomNumber);
 		
     	HttpSession session = request.getSession();
-    	session.setAttribute("id", id);
+    	session.setAttribute("userId", userId);
+    	session.setAttribute("roomNumber", roomNumber);
 		return "chat";
 	}
 	

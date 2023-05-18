@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-//@ServerEndpoint(value="/echo.do")
+@ServerEndpoint(value="/echo.do")
 public class WebSocketChat2 {
     
     private static final List<Session> sessionList = new ArrayList<Session>(); //맵으로 바꿔주자
@@ -47,8 +47,10 @@ public class WebSocketChat2 {
         if(sessionList == null)
         	sessionList = new ArrayList<Session>();
         sessionList.add(session);
-        System.out.println(sessionList);
         sessionList2.put(0, sessionList);
+        System.out.println(session.getId());
+        System.out.println(session);
+        System.out.println(sessionList);
         System.out.println(sessionList2);
     }
     

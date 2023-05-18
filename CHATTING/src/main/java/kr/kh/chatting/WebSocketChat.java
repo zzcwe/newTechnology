@@ -1,10 +1,12 @@
 package kr.kh.chatting;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -17,68 +19,88 @@ import javax.websocket.server.ServerEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
-@ServerEndpoint(value="/echo.do")
+@ServerEndpoint(value="/echo.do/{roomNumber}/{userId}")
 public class WebSocketChat {
     
-    private static final List<Session> sessionList=new ArrayList<Session>();;
+   
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChat.class);
+    private static final Map<Integer, Map<String, Session>> roomMap = new HashMap<Integer, Map<String, Session>>();
+
     public WebSocketChat() {
-        // TODO Auto-generated constructor stub
+ 
         System.out.println("웹소켓 생성");
     }
     
-    @OnOpen
-    public void onOpen(Session session) {
+    @OnOpen //스크립트에서 소켓을 열면 자동으로 실행이 됨
+    public void onOpen(Session session, @PathParam("userId") String id, @PathParam("roomNumber") String num) {
     	
-        logger.info("Open session id:"+session.getId());
+        logger.info("Participate Room:"+ num +", "+ "Open session id:"+id);
         try {
             final Basic basic=session.getBasicRemote();
             basic.sendText("대화방에 연결되었습니다.");
         }catch (Exception e) {
-            // TODO: handle exception
+            
             System.out.println(e.getMessage());
         }
-        sessionList.add(session);
+        
+        Integer roomNum = Integer.valueOf(num);
+    	Map<String, Session> roomMemberMap = roomMap.get(roomNum);
+    	if(roomMemberMap == null)
+    		roomMemberMap = new HashMap<String, Session>();
+    	roomMemberMap.put(id, session);
+    	roomMap.put(roomNum, roomMemberMap);
+        System.out.println(roomMap);
+        
     }
     
   
-    private void sendAllSessionToMessage(Session self, String sender, String message) {
+    private void sendAllSessionToMessage(Session self, String sender, String message, String room) {
     	
         try {
-            for(Session session : WebSocketChat.sessionList) {
+        	Integer roomNum = Integer.valueOf(room);
+        	System.out.println(roomNum);
+        	Map<String, Session> idSession = roomMap.get(roomNum);
+        	System.out.println(idSession);
+        	Collection<Session> SessionValue = idSession.values();
+        	for( Session session : SessionValue) {
+        	
+        		if(!self.getId().equals(session.getId())) {
+        			session.getBasicRemote().sendText(sender+" : "+message);
+        		}
+        		
+        	}
+            /*for(Session session : WebSocketChat.sessionList) {
                 if(!self.getId().equals(session.getId())) {
                     session.getBasicRemote().sendText(sender+" : "+message);
                 }
-            }
+            }*/
         }catch (Exception e) {
-            // TODO: handle exception
+        	
             System.out.println(e.getMessage());
         }
     }
     
   
-    @OnMessage
+    @OnMessage //스크립트에서 소켓으로 메시지를 보내면 자동으로 실행
     public void onMessage(String message,Session session) {
     	
+    	String room = message.split(",")[2];
     	String sender = message.split(",")[1];
     	message = message.split(",")[0];
+    	System.out.println(sender);
     	
         logger.info("Message From "+sender + ": "+message);
         try {
             final Basic basic=session.getBasicRemote();
             basic.sendText("<나> : "+message);
         }catch (Exception e) {
-            // TODO: handle exception
+            
             System.out.println(e.getMessage());
         }
-        sendAllSessionToMessage(session, sender, message);
+        sendAllSessionToMessage(session, sender, message, room);
     }
     
     @OnError
@@ -89,6 +111,7 @@ public class WebSocketChat {
     @OnClose
     public void onClose(Session session) {
         logger.info("Session "+session.getId()+" has ended");
-        sessionList.remove(session);
+        //sessionList.remove(session);
+        Collection<Map<String, Session>> s = roomMap.values();
     }
 }
