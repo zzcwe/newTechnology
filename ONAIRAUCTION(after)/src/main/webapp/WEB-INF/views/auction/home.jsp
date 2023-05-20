@@ -885,7 +885,7 @@
                             </dd>
                         </dl>
                     </li>
-                    <li>
+                    <li id="tabl8">
                     	<div id="tabl7">
 	                        <dl>
 	                            <dt>입찰가능시간</dt>
@@ -1022,7 +1022,7 @@
                 <div class="textarea_container" style="padding: 0px 0px 5px 0px; overflow: scroll;overflow-x: hidden; border: none; height: 65%" >
                 <ul id="tabl1">
                 	<c:forEach items="${auctionRecordList}" var="item" varStatus="status">
-				    	<li style="font-size: 12px; margin: 1px">${item.ar_num}. 입찰시간:${item.ar_bid_time} 입찰가격:${item.ar_bid_price} 입찰자:${item.ar_me_id}</li>
+				    	<li style="font-size: 12px; margin: 1px">입찰시간:${item.ar_bid_time} 입찰가격:${item.ar_bid_price} 입찰자:${item.ar_me_id}</li>
 				    </c:forEach>
                 </ul>
                	</div>
@@ -1068,7 +1068,8 @@
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
     <input type="hidden" id="sellerLikeState" value="${sellerLikeState}">
     <input type="hidden" id="productLikeState" value="${productLikeState}">
-    <input type="hidden" id="countDown" value="">
+    <input type="hidden" id="intEnd" value="999999">
+    
 	<div id="myPopup" class="popup">
       <div class="popup-content" onmousedown="dragPopup(event)">
         <div class="close-popup">
@@ -1078,13 +1079,11 @@
           <table class="auction-message">
             <thead>
               <tr>
-                <th>쪽지번호</th>
-                <th>수발신 시간</th>
-                <th>읽은 시간</th>
-                <th>보낸 ID</th>
-                <th>받는 ID</th>
-                <th>제목</th>
-                <th>내용</th>
+                <th style="width:10% ">쪽지번호</th>
+                <th style="width:20% ">수신시간</th>
+                <th style="width:10% ">보낸 ID</th>
+                <th style="width:30% ">   제목   </th>
+                <th style="width:30% ">   내용   </th>
               </tr>
             </thead>
             <tbody>
@@ -1092,9 +1091,7 @@
                 <tr>
                   <td>${vs}</td>
                   <td>${me.me_time}</td>
-                  <td>${me.me_read_time}</td>
                   <td>${me.me_send_id}</td>
-                  <td>${me.me_receive_id}</td>
                   <td>${me.me_title}</td>
                   <td>${me.me_content}</td>
                 </tr>
@@ -1104,11 +1101,12 @@
         </div>
       </div>
     </div>
-    
-    <div id=tabl8> ${intNow} ${intEnd}</div>	
+    	
+   
     ${lastAuctionRecord.getAr_next_bid_price()}
     ${sellerLikeState}
     ${productLikeState}
+    ${auction}
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
@@ -1351,51 +1349,85 @@
 	setInterval(() => {
 		$('#tabl7').load(location.href + ' #tabl7')
 	}, 1000);
-	setInterval(() => {
-		$('#tabl8').load(location.href + ' #tabl8')
-	}, 1000);
     
    
     
+   
     $('#modal_confirm_btn1').click(function () {
-    	
-    	let price = $("#nextPrice").val();
-    	let num;
-    	if(num != 0)
-    		$.ajax({
-    			type: 'POST',
-				url: '<c:url value="/auctionBid"></c:url>',
-				data: JSON.stringify(price),
-				dataType:"JSON",
-				contentType:"application/json; charset=UTF-8",
-				success: function(result){
-					if(result.res){
-						
-							$("#nextPrice").val(result.nextPrice);
-							$("#countDown").val(result.bidTimeReset);
-							alert("입찰하였습니다.");
-						}
-					else if(result.bidPossible == false){
-						alert("경매시작전 입니다.")
-					}
-					else {
-						alert("보유계좌에 잔액이 부족합니다.");
-						
-					}
-					
-				},
-				error : function () {
-					console.log("error");
-				}
-    		});
-    	if(num == 0)
-    		alert("종료된 경매이므로 입찰할 수 없습니다.")
-    });
+        var price =	$("#nextPrice").val();
+        var end  = $("#intEnd").val();
+        
+        	
+        var formData = {
+        	 value1 : price,
+        	 value2 : end
+        }
+        	
+        		$.ajax({
+        			type: 'POST',
+    				url: '<c:url value="/auctionBid"></c:url>',
+    				data: JSON.stringify(formData), //두개이상보낼때는 json.stringify제거
+    				dataType:"JSON",
+    				contentType:"application/json; charset=UTF-8",
+    				success: function(result){
+    					if(result.res == true){
+    						alert("현재입찰가로 입찰하였습니다.");
+    						$("#nextPrice").val(result.nextPrice);
+    						$("#intEnd").val(result.intEnd);
+    							
+    						//location.reload() //새로고침 코드
+    						}
+    					else if(result.bidPossible == false){
+    						alert("경매시작전 입니다.")
+    					}
+    					else if(result.res == false) {
+    						alert("보유계좌에 잔액이 부족합니다.");
+    					}
+    					else if(result.auctionEnd == true){
+    						let str = '';
+    						str += 
+    						'<div id="">'+
+    	                        '<dl>'+
+    		                        '<dt>'+'입찰가능시간'+'</dt>'+
+    		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+    		                         	'경매가 종료되었습니다.'+
+    		                        '</dd>'+
+    	                    	'</dl>'+
+                			'</div>'
+    	                  $('#tabl8').html(str);
+                			alert("종료된 경매입니다.");
+    					}
+    					else if(result.already == true){
+    						let str = '';
+    						str += 
+    						'<div id="">'+
+    	                        '<dl>'+
+    		                        '<dt>'+'입찰가능시간'+'</dt>'+
+    		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+    		                         	'경매가 종료되었습니다.'+
+    		                        '</dd>'+
+    	                    	'</dl>'+
+                			'</div>'
+    	                  $('#tabl8').html(str);
+                			alert("종료된 경매입니다.");
+    					} 
+    					
+    				},
+    				error : function () {
+    					console.log("error");
+    					console.log(data);
+    				}
+        		});
+        });
     $('#modal_double_btn1').click(function () {
+    var price =	$("#nextPrice").val() * 2;
+    var end  = $("#intEnd").val();
+    
     	
-    	var formData = new FormData();
-    	formData.append('price', $("#nextPrice").val() * 2);
-    	formData.append('count', $("#countDown").val());
+    var formData = {
+    	 value1 : price,
+    	 value2 : end
+    }
     	
     		$.ajax({
     			type: 'POST',
@@ -1404,30 +1436,52 @@
 				dataType:"JSON",
 				contentType:"application/json; charset=UTF-8",
 				success: function(result){
-					if(result.res){
-						alert("현재입찰가의 2배로 입찰하였습니다.")
-						let str = '';
-						str += 
-							'<div class="modal_content1" id="indexListAjax4">'+
-							'회원님의 입찰신청 가격은 : ' + '$' + result.nextPrice +' 입니다.'+'<br>'+
-							'입찰하시겠습니까?'
-							+'</div>';
-							$('#tabl4').html(str);
-							$("#nextPrice").val(result.nextPrice);
-							$("#countDown").val(result.bidTimeReset);
+					if(result.res == true){
+						alert("현재입찰가의 2배로 입찰하였습니다.");
+						$("#nextPrice").val(result.nextPrice);
+						$("#intEnd").val(result.intEnd);
+							
 						//location.reload() //새로고침 코드
 						}
 					else if(result.bidPossible == false){
 						alert("경매시작전 입니다.")
 					}
-					else {
+					else if(result.res == false) {
 						alert("보유계좌에 잔액이 부족합니다.");
-						
 					}
+					else if(result.auctionEnd == true){
+						let str = '';
+						str += 
+						'<div id="">'+
+	                        '<dl>'+
+		                        '<dt>'+'입찰가능시간'+'</dt>'+
+		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+		                         	'경매가 종료되었습니다.'+
+		                        '</dd>'+
+	                    	'</dl>'+
+            			'</div>'
+	                  $('#tabl8').html(str);
+            			alert("종료된 경매입니다.");
+					}
+					else if(result.already == true){
+						let str = '';
+						str += 
+						'<div id="">'+
+	                        '<dl>'+
+		                        '<dt>'+'입찰가능시간'+'</dt>'+
+		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
+		                         	'경매가 종료되었습니다.'+
+		                        '</dd>'+
+	                    	'</dl>'+
+            			'</div>'
+	                  $('#tabl8').html(str);
+            			alert("종료된 경매입니다.");
+					} 
 					
 				},
 				error : function () {
 					console.log("error");
+					console.log(data);
 				}
     		});
     });

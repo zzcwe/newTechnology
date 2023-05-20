@@ -24,11 +24,11 @@ public interface AuctionService {
 	
 	boolean insertMessage(MessageVO message);
 	
-	ArrayList<AuctionRecordVO> selectAuctionRecord(int productPrice, String sellerId, int auctionNum);
+	ArrayList<AuctionRecordVO> selectAuctionRecord(String auctionStart, int productPrice, String sellerId, int auctionNum);
 	
 	MemberVO getUser(String me_id); //나중에 삭제
 	
-	boolean insertBid(Double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum);
+	boolean insertBid(double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum);
 	
 	MembershipLevelVO selectMebership(String levelName);
 
@@ -60,5 +60,9 @@ public interface AuctionService {
 	
 	Map<String, Object> productLike(int productCode, String userId, int productLikeState);
 
-	void insertAuctionRecord(int pr_start_price, String me_id, int au_num);
+	void insertAuctionRecord(String auctionStart, int pr_start_price, String me_id, int au_num);
+	
+	AuctionRecordVO lastAuctionRecord(int auctionNum);
+
+	boolean finishAuction(int intNow, int intEnd2, AuctionVO auction);
 }

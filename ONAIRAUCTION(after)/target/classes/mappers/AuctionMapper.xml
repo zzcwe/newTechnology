@@ -70,7 +70,21 @@
   	</update>
   	<insert id="insertAuctionRecord2">
 	  	insert into auction_record(ar_bid_time, ar_bid_price, ar_me_id, ar_au_num)
-	  		values(now(), #{price}, #{id}, #{num})
+	  		values(#{date}, #{price}, #{id}, #{num})
   	</insert>
+  	<update id="updateAuction">
+  		update auction
+  			set
+  				au_final_date = now()
+  			where
+  				au_num = #{a.au_num}
+  	</update>
+  	<update id="updateProduct">
+  		update product
+  			set
+  				pr_state = "경매종료"
+  			where
+  				pr_code = #{p.pr_code}
+  	</update>
   	
 </mapper>

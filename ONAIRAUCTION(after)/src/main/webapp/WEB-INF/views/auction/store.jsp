@@ -64,8 +64,7 @@
                 <table class="auction-product">
                 <thead>
                     <tr>
-                    <th>번호</th>  
-                    <th>상품 사진</th>
+                    <th>번호</th>
                     <th>상품 이름</th>
                     <th>상품 상태</th>
                     <th>경매 상태</th>

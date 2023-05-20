@@ -33,7 +33,7 @@ public interface AuctionDAO {
 
 	VirtualAccountVO selectAccount(String id);
 
-	void insertAuctionRecord(@Param("p")Double price, @Param("i")String id, @Param("n")int auctionNum);
+	void insertAuctionRecord(@Param("p")double price, @Param("i")String id, @Param("n")int auctionNum);
 
 	AuctionVO selectAuction(int num); 
 
@@ -53,5 +53,9 @@ public interface AuctionDAO {
 
 	void updateProductLike(@Param("p")ProductLikeVO table, @Param("productLikeState")int productLikeState);
 
-	void insertAuctionRecord2(@Param("price")int pr_start_price, @Param("id")String me_id, @Param("num")int au_num);
+	void insertAuctionRecord2(@Param("date")String au_start_day, @Param("price")int pr_start_price, @Param("id")String me_id, @Param("num")int au_num);
+
+	void updateAuction(@Param("a")AuctionVO auction);
+
+	void updateProduct(@Param("p")ProductVO product);
 }

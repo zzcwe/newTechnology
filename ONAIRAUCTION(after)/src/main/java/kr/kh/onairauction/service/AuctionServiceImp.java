@@ -41,7 +41,6 @@ public class AuctionServiceImp implements AuctionService {
 	}
 	@Override
 	public boolean insertMessage(MessageVO message) {
-		System.out.println(message); //수정해야함 (유저아이디or셀러아이디가 없을 경우 false)
 		if(message.getMe_content() == ""||message.getMe_title()=="")//수정해야함
 			return false;
 		if(auctionDAO.insertMessage(message) != 0)
@@ -49,10 +48,10 @@ public class AuctionServiceImp implements AuctionService {
 		return false;
 	}
 	@Override
-	public ArrayList<AuctionRecordVO> selectAuctionRecord(int productPrice, String sellerId, int auctionNum){
+	public ArrayList<AuctionRecordVO> selectAuctionRecord(String auctionStart, int productPrice, String sellerId, int auctionNum){
 		ArrayList<AuctionRecordVO> a = auctionDAO.selectAuctionRecord(auctionNum);
 		if(a.size() == 0) {
-			insertAuctionRecord(productPrice, sellerId, auctionNum);
+			insertAuctionRecord(auctionStart, productPrice, sellerId, auctionNum);
 		}
 		a = auctionDAO.selectAuctionRecord(auctionNum);
 		return a;
@@ -63,7 +62,7 @@ public class AuctionServiceImp implements AuctionService {
 		return auctionDAO.selectMember(me_id);
 	}
 	@Override
-	public boolean insertBid(Double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum) {
+	public boolean insertBid(double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum) {
 		double a = userAccount.getVa_holding_amount(); 
 		double b = price + (price * expense * 0.001);
 		String id = user.getMe_id();
@@ -191,14 +190,43 @@ public class AuctionServiceImp implements AuctionService {
 		}
 		StringBuffer bd = new StringBuffer();
 		bd.append(dateStr);
+		if(bd.length() == 6) {
+			bd.insert(2, "시");
+			bd.insert(5, "분");
+			bd.insert(8, "초");
+		}
 		if(bd.length() == 5) {
 			bd.insert(1, "시");
 			bd.insert(4, "분");
 			bd.insert(7, "초");
 		}
-		if(bd.length() == 6) {
-			bd.insert(2, "시");
-			bd.insert(5, "분");
+		if(bd.length() == 4) {
+			bd.insert(0,"00");
+			bd.insert(2,"시");
+			bd.insert(5,"분");
+			bd.insert(8,"초");
+			
+		}
+		if(bd.length() == 3) {
+			bd.insert(0,"00");
+			bd.insert(2,"시");
+			bd.insert(3,"0");
+			bd.insert(5,"분");
+			bd.insert(8, "초");
+		}
+		if(bd.length() == 2) {
+			bd.insert(0,"00");
+			bd.insert(2,"시");
+			bd.insert(3,"00");
+			bd.insert(5,"분");
+			bd.insert(8, "초");
+		}
+		if(bd.length() == 1) {
+			bd.insert(0,"00");
+			bd.insert(2,"시");
+			bd.insert(3,"00");
+			bd.insert(5,"분");
+			bd.insert(7, "0");
 			bd.insert(8, "초");
 		}
 		dateStr = bd.substring(0);
@@ -247,8 +275,25 @@ public class AuctionServiceImp implements AuctionService {
 		return map;
 	}
 	@Override
-	public void insertAuctionRecord(int pr_start_price, String me_id, int au_num) {
-		auctionDAO.insertAuctionRecord2(pr_start_price,  me_id, au_num);
+	public void insertAuctionRecord(String auctionStart, int pr_start_price, String me_id, int au_num) {
+		auctionDAO.insertAuctionRecord2(auctionStart, pr_start_price,  me_id, au_num);
+	}
+	@Override
+	public AuctionRecordVO lastAuctionRecord(int auctionNum) {
+		ArrayList<AuctionRecordVO> recordList = auctionDAO.selectAuctionRecord(auctionNum);
+		int a = recordList.size() - 1;
+		AuctionRecordVO L = recordList.get(a);
+		return L;
+	}
+	@Override
+	public boolean finishAuction(int intNow, int intEnd2, AuctionVO auction) {
+		if(intNow > intEnd2 || auction.getAu_final_date() != null) {
+			auctionDAO.updateAuction(auction);
+			ProductVO product =	auctionDAO.selectProduct(auction.getAu_pr_code());
+			auctionDAO.updateProduct(product);
+			return true;
+		}
+		return false;
 	}
 	
 	
