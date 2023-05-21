@@ -111,6 +111,16 @@
 	  	insert into delivery(de_start_date, de_complete_date, de_ao_num, de_bl_num)
 	  		values(DATE_ADD(NOW(), INTERVAL 3 DAY), DATE_ADD(NOW(), INTERVAL 10 DAY),#{a}, #{b})
   	</insert>
-  	
+  	<select id="selectChatting" resultType="kr.kh.onairauction.vo.ChattingVO">
+  		select * from chatting where  ch_au_num = #{au_num}
+  	</select>
+  	<insert id="insertChatting">
+	  	insert into chatting(ch_au_num)
+	  		values(#{au_num})
+  	</insert>
+  	<insert id="insertChattingRecord">
+	  	insert into chatting_record(cr_content, cr_time, cr_me_id, cr_ch_num)
+	  		values(#{m}, now(), #{s}, #{r})
+  	</insert>
   	
 </mapper>

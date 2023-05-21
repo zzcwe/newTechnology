@@ -7,6 +7,7 @@ import java.util.Map;
 import kr.kh.onairauction.vo.AuctionRecordVO;
 import kr.kh.onairauction.vo.AuctionVO;
 import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.ChattingVO;
 import kr.kh.onairauction.vo.MemberVO;
 import kr.kh.onairauction.vo.MembershipLevelVO;
 import kr.kh.onairauction.vo.MessageVO;
@@ -73,4 +74,8 @@ public interface AuctionService {
 	AuctionOrderVO insertOrder(AuctionVO auction);
 
 	void insertDelivery(int ao_num, int bl_num);
+
+	ChattingVO selectChatting(int au_num);
+
+	void insertChattingRecord(String message, String sender, String room);
 }

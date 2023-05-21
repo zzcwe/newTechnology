@@ -416,14 +416,17 @@
         animation: blink-effect 1s step-end infinite;
     }
     .chat-bottom{
-        height: 150px;box-sizing: border-box;
+        height: 130px;box-sizing: border-box;
         
+    }
+    .chat-mid-cover{
+    height: 418px; border-radius: 17px; overflow: hidden;
     }
     .chat-mid{
         height: 417px; box-sizing: border-box;
         color: green; border: 1px solid #ccc;
         line-height: 420px; margin-bottom: 2px;
-        border-radius: 18px; 
+        border-radius: 18px; z-index: 10;
     }
     .chat-bottom input{
         height: 100%; box-sizing: border-box; border: 1px solid #ccc;
@@ -713,7 +716,8 @@
         width: 100%; overflow: hidden;height: 330px; margin-top: 10px; border: 2px solid #ccc; border-radius: 20px;
     }
     .chat-mid{
-    	line-height: 20px;
+    	line-height: 20px; text-align: left; overflow-y: auto; display: flex; flex-direction: column-reverse;
+    	padding-left: 15px; padding-bottom: 10px;
     }
     .popup {
 	  display: none;
@@ -866,10 +870,18 @@
         </div>
         <div class="box mid">
             <div class="chat-top" id="tabl3">현재 입찰자: ${lastAuctionRecord.getAr_me_id()} 님	입찰가격: $ ${lastAuctionRecord.getAr_bid_price()}	입찰시간: ${lastAuctionRecord.getAr_bid_time()}</div>
-            <div class="chat-mid"></div>
+            <div class="chat-mid-cover">
+            <div class="chat-mid" id="messages"></div>
+            </div>
             <div class="chat-bottom">
-                <input type="text" placeholder="내용을 입력해주세요.">
-                <button onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">전송</button>
+            	<div>           	
+        		<button type="button" onclick="closeSocket();">대회방 나가기</button>
+        		<button type="button" onclick="openSocket();">대화방 참여</button>
+            	</div>
+            	<input type="hidden" id="room" value="${chattingChannel}"> 
+        		<input type="hidden" id="sender" value="${userId}">
+                <input type="text" id="messageinput" placeholder="내용을 입력해주세요.">
+                <button type="button" onclick="send();" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)" id="message_send">전송</button>
             </div>
         </div>
         <div class="box right">
@@ -1616,6 +1628,9 @@
 				}
     		});
     });
+    $('#message_send').click(function () {
+    	$('#messageinput').val('');
+    });
     </script>
     <script type="text/javascript">
     var popup = document.getElementById("myPopup");
@@ -1646,6 +1661,58 @@
       document.removeEventListener("mouseup", releasePopup);
     }
     </script>
+    <script type="text/javascript">
+       
+      	var ws;
+        var messages = document.getElementById("messages");
+        
+        function openSocket(){
+            if(ws !== undefined && ws.readyState !== WebSocket.CLOSED ){
+                writeResponse("WebSocket is already opened.");
+                console.log();
+                console.log();
+                return;
+            }
+            //웹소켓 객체 만드는 코드 - 서버의 @OnOpen을 실행시킴
+            ws = new WebSocket("ws://localhost:8080/onairauction/echo.do/${chattingChannel}/${userId}");
+            
+            ws.onopen = function(event){
+                if(event.data === undefined){
+              		return;
+                }
+                writeResponse(event.data);
+            };
+            
+            ws.onmessage = function(event){ 
+                console.log('writeResponse');
+                console.log(event.data)
+                writeResponse(event.data);
+                console.log();
+            };
+            
+            ws.onclose = function(event){
+                writeResponse("대화 종료");
+            }
+            
+        }
+        
+        function send(){ 
+            var text = document.getElementById("messageinput").value+","+document.getElementById("sender").value+","+document.getElementById("room").value;
+            ws.send(text);
+            console.log(text);
+            text = "";
+        }
+        
+        function closeSocket(){
+            ws.close();
+        }
+        
+        function writeResponse(text){
+            messages.innerHTML += "<br>"+text;
+        }
+
+        
+  </script>
 
 </body>
 </html>

@@ -16,10 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import com.mysql.cj.Session.SessionEventListener;
+
 import kr.kh.onairauction.service.AuctionService;
 import kr.kh.onairauction.vo.AuctionRecordVO;
 import kr.kh.onairauction.vo.AuctionVO;
 import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.ChattingVO;
 import kr.kh.onairauction.vo.DeliveryVO;
 import kr.kh.onairauction.vo.MemberVO;
 import kr.kh.onairauction.vo.MembershipLevelVO;
@@ -98,6 +102,11 @@ public class AirAuctionController {
 			String end = auctionService.endTime(lastAuctionRecord, auction);
 			mv.addObject("endTime", end + "에 종료됩니다.");
 		}
+		ChattingVO channel = auctionService.selectChatting(au_num);
+		String userId = user.getMe_id();
+		int chattingChannel = channel.getCh_num();
+		session.setAttribute("chattingChannel", chattingChannel);
+		session.setAttribute("userId", userId);
 		return mv;
 		//DB에 저장되어 있는 데이터 - 구매자, 판매자, 상품, 경매, 경매카테고리, 신고카테고리, 가상계좌
 		

@@ -12,6 +12,7 @@ import kr.kh.onairauction.dao.AuctionDAO;
 import kr.kh.onairauction.vo.AuctionRecordVO;
 import kr.kh.onairauction.vo.AuctionVO;
 import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.ChattingVO;
 import kr.kh.onairauction.vo.MemberVO;
 import kr.kh.onairauction.vo.MembershipLevelVO;
 import kr.kh.onairauction.vo.MessageVO;
@@ -327,6 +328,20 @@ public class AuctionServiceImp implements AuctionService {
 	@Override
 	public void insertDelivery(int ao_num, int bl_num) {
 		auctionDAO.insertDelivery(ao_num, bl_num);
+		
+	}
+	@Override
+	public ChattingVO selectChatting(int au_num) {
+		ChattingVO channel = auctionDAO.selectChatting(au_num);
+		if(channel == null) {
+			auctionDAO.insertChatting(au_num);
+			channel = auctionDAO.selectChatting(au_num);
+		}
+		return channel;
+	}
+	@Override
+	public void insertChattingRecord(String message, String sender, String room) {
+		auctionDAO.insertChattingRecord(message, sender, room);
 		
 	}
 	
