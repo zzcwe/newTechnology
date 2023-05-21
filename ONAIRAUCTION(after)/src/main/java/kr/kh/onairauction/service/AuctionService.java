@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
 
-import kr.kh.onairauction.vo2.SellerLikeVO;
-import kr.kh.onairauction.vo2.AuctionRecordVO;
-import kr.kh.onairauction.vo2.AuctionVO;
-import kr.kh.onairauction.vo2.MemberVO;
-import kr.kh.onairauction.vo2.MembershipLevelVO;
-import kr.kh.onairauction.vo2.MessageVO;
-import kr.kh.onairauction.vo2.ProductLikeVO;
-import kr.kh.onairauction.vo2.ProductVO;
-import kr.kh.onairauction.vo2.ReportCategoryVO;
-import kr.kh.onairauction.vo2.ReportVO;
-import kr.kh.onairauction.vo2.VirtualAccountVO;
+import kr.kh.onairauction.vo.AuctionRecordVO;
+import kr.kh.onairauction.vo.AuctionVO;
+import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.MemberVO;
+import kr.kh.onairauction.vo.MembershipLevelVO;
+import kr.kh.onairauction.vo.MessageVO;
+import kr.kh.onairauction.vo.AuctionOrderVO;
+import kr.kh.onairauction.vo.ProductLikeVO;
+import kr.kh.onairauction.vo.ProductVO;
+import kr.kh.onairauction.vo.ReportCategoryVO;
+import kr.kh.onairauction.vo.ReportVO;
+import kr.kh.onairauction.vo.SellerLikeVO;
+import kr.kh.onairauction.vo.VirtualAccountVO;
 
 public interface AuctionService {
 	
@@ -26,7 +28,7 @@ public interface AuctionService {
 	
 	ArrayList<AuctionRecordVO> selectAuctionRecord(String auctionStart, int productPrice, String sellerId, int auctionNum);
 	
-	MemberVO getUser(String me_id); //나중에 삭제
+	MemberVO getUser(String me_id);
 	
 	boolean insertBid(double price, int expense, VirtualAccountVO userAccount, MemberVO user, int auctionNum);
 	
@@ -65,4 +67,10 @@ public interface AuctionService {
 	AuctionRecordVO lastAuctionRecord(int auctionNum);
 
 	boolean finishAuction(int intNow, int intEnd2, AuctionVO auction);
+
+	ArrayList<BoardListVO> selectBoardList(String me_id);
+
+	AuctionOrderVO insertOrder(AuctionVO auction);
+
+	void insertDelivery(int ao_num, int bl_num);
 }

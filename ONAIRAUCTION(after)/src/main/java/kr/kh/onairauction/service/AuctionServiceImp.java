@@ -9,17 +9,19 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import kr.kh.onairauction.dao.AuctionDAO;
-import kr.kh.onairauction.vo2.SellerLikeVO;
-import kr.kh.onairauction.vo2.AuctionRecordVO;
-import kr.kh.onairauction.vo2.AuctionVO;
-import kr.kh.onairauction.vo2.MemberVO;
-import kr.kh.onairauction.vo2.MembershipLevelVO;
-import kr.kh.onairauction.vo2.MessageVO;
-import kr.kh.onairauction.vo2.ProductLikeVO;
-import kr.kh.onairauction.vo2.ProductVO;
-import kr.kh.onairauction.vo2.ReportCategoryVO;
-import kr.kh.onairauction.vo2.ReportVO;
-import kr.kh.onairauction.vo2.VirtualAccountVO;
+import kr.kh.onairauction.vo.AuctionRecordVO;
+import kr.kh.onairauction.vo.AuctionVO;
+import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.MemberVO;
+import kr.kh.onairauction.vo.MembershipLevelVO;
+import kr.kh.onairauction.vo.MessageVO;
+import kr.kh.onairauction.vo.AuctionOrderVO;
+import kr.kh.onairauction.vo.ProductLikeVO;
+import kr.kh.onairauction.vo.ProductVO;
+import kr.kh.onairauction.vo.ReportCategoryVO;
+import kr.kh.onairauction.vo.ReportVO;
+import kr.kh.onairauction.vo.SellerLikeVO;
+import kr.kh.onairauction.vo.VirtualAccountVO;
 
 @Service
 public class AuctionServiceImp implements AuctionService {
@@ -291,9 +293,41 @@ public class AuctionServiceImp implements AuctionService {
 			auctionDAO.updateAuction(auction);
 			ProductVO product =	auctionDAO.selectProduct(auction.getAu_pr_code());
 			auctionDAO.updateProduct(product);
+			AuctionRecordVO last = lastAuctionRecord(auction.getAu_num());
+			String bidder = last.getAr_me_id();
+			int auctionPrice = last.getAr_bid_price();
+			VirtualAccountVO bidderAccount = selectAccount(bidder);
+			MemberVO bidderUser =  getUser(bidder);
+			String levelName = bidderUser.getMe_ml_name();
+			MembershipLevelVO level = selectMebership(levelName);
+			int expense = level.getMl_expense();
+			double sum = auctionPrice + (auctionPrice * expense * 0.001);
+			double amount = bidderAccount.getVa_holding_amount();
+			double afterAmount = amount - sum;
+			auctionDAO.insertWithdraw(sum, bidder);
+			auctionDAO.updateVirtualAccount(bidder, afterAmount);
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public ArrayList<BoardListVO> selectBoardList(String me_id) {
+		
+		return auctionDAO.selectBoardList(me_id);
+	}
+	@Override
+	public AuctionOrderVO insertOrder(AuctionVO auction) {
+		int num = auction.getAu_ac_num();
+		AuctionRecordVO last = lastAuctionRecord(auction.getAu_num());
+		String auctionBidder = last.getAr_me_id();
+		auctionDAO.insertOrder(auctionBidder, num);
+		AuctionOrderVO order = auctionDAO.selectOrder(num);
+		return order;
+	}
+	@Override
+	public void insertDelivery(int ao_num, int bl_num) {
+		auctionDAO.insertDelivery(ao_num, bl_num);
+		
 	}
 	
 	

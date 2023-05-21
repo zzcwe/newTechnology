@@ -2,33 +2,44 @@ package kr.kh.onairauction.vo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
 public class AuctionVO {
-	int ac_num;
-	int ac_calculation;
-	Date ac_bidtime;
-	Date ac_startdate;
-	Date ac_finaldate;
-	int ac_extension;
-	int ac_faild;
-	int ac_immediate;
-	String ac_limitlevel;
-	String ac_state;
-	String ac_deliveryway;
-	int ac_pr_code;
-	String ac_me_id;
-	String ac_ac_name;
-public String getAc_startdate() {
-	SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	return date.format(ac_startdate);
+	int au_num;
+	int au_calculation;
+	int au_limit_bid_time;
+	public Date au_start_date;
+	Date au_final_date;
+	int au_extension;
+	int au_faild;
+	int au_immediate;
+	int au_limit_level;
+	String au_delivery_way;
+	int au_pr_code;
+	String au_me_id;
+	int au_ac_num;
+	
+public String getAu_start_date() {
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(au_start_date == null) {
+			return null;
+		}
+	return date.format(au_start_date);
  	}
-public String getAc_finaldate() {
-	SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	return date.format(ac_finaldate);
+public String getAu_final_date() {
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(au_final_date == null) {
+			return null;
+		}
+	return date.format(au_final_date);
  	}
+
+public String getAu_delivery_date() {
+	SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd" + "일 부터 3일이내");
+	return date.format(au_final_date);
+	}
+	
 }
 	
 	

@@ -4,8 +4,8 @@ import lombok.Data;
 
 @Data
 public class AuctionJoinVO {
-	int aj_ac_num;
-	String aj_me_id;
+	int aj_au_num;
+	int aj_me_id;
 }
 	
 	

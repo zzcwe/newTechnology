@@ -1,47 +1,53 @@
 package kr.kh.onairauction.vo;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
 public class AuctionRecordVO {
 	int ar_num;
-	Date ar_bidtime;
-	double ar_bidprice;
+	Date ar_bid_time;
+	int ar_bid_price;
 	String ar_me_id;
-	int ar_ac_num;
-	 
-public String getAr_bidtime() {
-	SimpleDateFormat bidtime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	return bidtime.format(ar_bidtime);
+	int ar_au_num;
+	
+	
+public String getAr_bid_time() {
+		SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if(ar_bid_time == null) {
+			return null;
+		}
+	return date.format(ar_bid_time);
  	}
-public double getAr_nextBidprice() {
+
+public double getAr_next_bid_price() {
 	double unit = 0;
-	if( ar_bidprice < 20){
+	if( ar_bid_price < 20){
 		unit = 1;
 	}
-	if(20 <= ar_bidprice && ar_bidprice < 50) {
+	if(20 <= ar_bid_price && ar_bid_price < 50) {
 		unit = 4;
 	}
-	if(50 <= ar_bidprice && ar_bidprice < 200) {
+	if(50 <= ar_bid_price && ar_bid_price < 200) {
 		unit = 7;
 	}
-	if(200 <= ar_bidprice && ar_bidprice < 400) {
+	if(200 <= ar_bid_price && ar_bid_price < 400) {
 		unit = 15;
 	}
-	if(400 <= ar_bidprice && ar_bidprice < 800) {
+	if(400 <= ar_bid_price && ar_bid_price < 800) {
 		unit = 35;
 	}
-	if(800 <= ar_bidprice) {
+	if(800 <= ar_bid_price) {
 		unit = 70;
 	}
-	double nextBidPrice = ar_bidprice + unit;
+	double nextBidPrice = ar_bid_price + unit;
 	
 	return nextBidPrice;
 }
-public double getAr_nextBidprice(double price) {
+
+public double getAr_next_bid_price(double price) {
 	double unit = 0;
 	if( price < 20){
 		unit = 1;
@@ -65,7 +71,6 @@ public double getAr_nextBidprice(double price) {
 	
 	return nextBidPrice;
 }
-
 }
 	
 	

@@ -1,16 +1,17 @@
 package kr.kh.onairauction.vo;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
 import lombok.Data;
 
 @Data
 public class FileVO {
 	int fi_num;
 	String fi_name;
-	String fi_savename;
-	String fi_tablename;
-	int tablenum;
+	String fi_save_name;
+	String fi_table_name;
+	int fi_table_num;
+	
 }
 	
 	

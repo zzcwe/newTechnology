@@ -663,6 +663,26 @@
         overflow: hidden;
         padding: 30px; opacity: 0.9;
     }
+    .modal_layer6 .modal_content3 {
+        display: block;
+        width:600px;
+        height: 650px;
+        background:#fff;
+        border:1px solid #666;
+        box-sizing: border-box;
+        border-radius: 20px;
+        overflow: hidden;
+        padding: 30px; opacity: 0.9;
+    } #modal_close_btn6{
+        position: absolute; 
+        width:150px; padding: 5px;
+        bottom: 40px; left: 30px; font-weight: bold; cursor: pointer;
+    }
+    #modal_confirm_btn6{
+        position: absolute; 
+        width:150px; padding: 5px;
+        bottom: 40px; right: 30px; font-weight: bold; cursor: pointer;
+    }
     #modal_close_btn5{
         position: absolute; 
         width:150px; padding: 5px;
@@ -890,7 +910,7 @@
 	                        <dl>
 	                            <dt>입찰가능시간</dt>
 	                            <dd class="korEndTime" style="font-weight: bold; color: green;">
-	                             	입찰시간은 ${endTime}에 종료됩니다.
+	                             	입찰시간은 ${endTime}
 	                            </dd>
 	                        </dl>
 	                	</div>
@@ -936,10 +956,18 @@
                                     자세히보기
                                     <span class="all_icon"></span>
                                 </button>
+                                
+                                
+                                <button style="display: none" class="est_ok" id="delivery_btn" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">
+                            		배송지설정
+                            	<span class="all_icon"></span>
+                            	
+                        		</button>
                                 <button class="est_ok" id="modal_open_btn1" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">
                                     입찰신청
                                     <span class="all_icon"></span>
                                 </button>
+                               
                             </dd>
                         </dl>
                     </li>
@@ -1065,10 +1093,31 @@
             </div>
         </div>
     </form>
+   
+    <form action="<c:url value='/delivery'></c:url>" method="post" class="delivery">
+        <div class="modal_layer modal_layer6">
+            <div id="modal">
+                <div class="modal_content3">
+                	
+                    <c:forEach items="${boardList}" var="bl">
+					      <label>
+					        <input type="checkbox" name="bl_num" value="${bl.bl_num}">
+					        	${bl.bl_name} : ${bl.bl_detail_address} 
+					      </label>
+					      <br>
+				    </c:forEach>
+                        
+                </div>
+                <button type="button" id="modal_close_btn6" class="close_btn2">닫기</button>
+                <button type="submit" id="modal_confirm_btn6" class="confirm_btn2">저장하기</button>
+            </div>
+        </div>
+    </form>
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
     <input type="hidden" id="sellerLikeState" value="${sellerLikeState}">
     <input type="hidden" id="productLikeState" value="${productLikeState}">
     <input type="hidden" id="intEnd" value="999999">
+    <input type="hidden" id="bidder" value="">
     
 	<div id="myPopup" class="popup">
       <div class="popup-content" onmousedown="dragPopup(event)">
@@ -1106,7 +1155,8 @@
     ${lastAuctionRecord.getAr_next_bid_price()}
     ${sellerLikeState}
     ${productLikeState}
-    ${auction}
+    
+    
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
@@ -1328,6 +1378,35 @@
             alert("쪽지가 전송되었습니다.")
         })
     })
+     $(function(){
+        const modal1 = document.querySelector('.modal_layer6')
+        function modalOn() {
+        modal1.style.display = "flex"
+        }
+        function modalOff1() {
+        modal1.style.display = "none"
+        }
+        
+        const btnModal = document.getElementById("delivery_btn");
+        btnModal.addEventListener("click", e => {
+        	const bidder = document.getElementById("bidder").value;
+        	const user = '${user.getMe_id()}';
+        	console.log(bidder);
+        	console.log(user);
+        	if (bidder === user){
+        		modalOn();
+        	};
+        });
+        const closeBtn = modal1.querySelector("#modal_close_btn6")
+        closeBtn.addEventListener("click", e => {
+            modalOff1()
+        })
+        const closeBtn1 = modal1.querySelector("#modal_confirm_btn6")
+        closeBtn1.addEventListener("click", e => {
+            modalOff1()
+            alert("배송받을 주소록이 저장되었습니다.")
+        })
+    })
     setInterval(() => {
 		$('#tabl1').load(location.href + ' #tabl1')
 	}, 1000);
@@ -1371,10 +1450,10 @@
     				contentType:"application/json; charset=UTF-8",
     				success: function(result){
     					if(result.res == true){
-    						alert("현재입찰가로 입찰하였습니다.");
+    						alert("입찰신청 가격으로 입찰하였습니다.");
     						$("#nextPrice").val(result.nextPrice);
     						$("#intEnd").val(result.intEnd);
-    							
+    						$("#bidder").val(result.bidder);	
     						//location.reload() //새로고침 코드
     						}
     					else if(result.bidPossible == false){
@@ -1390,11 +1469,14 @@
     	                        '<dl>'+
     		                        '<dt>'+'입찰가능시간'+'</dt>'+
     		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
-    		                         	'경매가 종료되었습니다.'+
+    		                        	'경매가 종료되었습니다.'+
     		                        '</dd>'+
     	                    	'</dl>'+
                 			'</div>'
-    	                  $('#tabl8').html(str);
+    	                  	$('#tabl8').html(str);
+    	                  	$('#delivery_btn').css("display", "inline-block");
+    	                  	$('#modal_open_btn1').css("display", "none");
+                			
                 			alert("종료된 경매입니다.");
     					}
     					else if(result.already == true){
@@ -1404,18 +1486,17 @@
     	                        '<dl>'+
     		                        '<dt>'+'입찰가능시간'+'</dt>'+
     		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
-    		                         	'경매가 종료되었습니다.'+
+    		                         	'이미 종료된 경매입니다.'+
     		                        '</dd>'+
     	                    	'</dl>'+
                 			'</div>'
-    	                  $('#tabl8').html(str);
-                			alert("종료된 경매입니다.");
+    	                  	$('#tabl8').html(str);
+    	                  	$('#modal_open_btn1').css("display", "none");
+                			alert("이미 종료된 경매입니다.");
     					} 
-    					
     				},
     				error : function () {
     					console.log("error");
-    					console.log(data);
     				}
         		});
         });
@@ -1437,10 +1518,10 @@
 				contentType:"application/json; charset=UTF-8",
 				success: function(result){
 					if(result.res == true){
-						alert("현재입찰가의 2배로 입찰하였습니다.");
+						alert("입찰신청 가격의 2배로 입찰하였습니다.");
 						$("#nextPrice").val(result.nextPrice);
 						$("#intEnd").val(result.intEnd);
-							
+						$("#bidder").val(result.bidder);	
 						//location.reload() //새로고침 코드
 						}
 					else if(result.bidPossible == false){
@@ -1460,7 +1541,9 @@
 		                        '</dd>'+
 	                    	'</dl>'+
             			'</div>'
-	                  $('#tabl8').html(str);
+		                  $('#tabl8').html(str);
+		                  $('#delivery_btn').css("display", "inline-block");
+		                  $('#modal_open_btn1').css("display", "none");
             			alert("종료된 경매입니다.");
 					}
 					else if(result.already == true){
@@ -1470,18 +1553,18 @@
 	                        '<dl>'+
 		                        '<dt>'+'입찰가능시간'+'</dt>'+
 		                        '<dd class="korEndTime" style="font-weight: bold; color: green;">'+
-		                         	'경매가 종료되었습니다.'+
+		                         	'이미 종료된 경매입니다.'+
 		                        '</dd>'+
 	                    	'</dl>'+
             			'</div>'
-	                  $('#tabl8').html(str);
-            			alert("종료된 경매입니다.");
+		                  $('#tabl8').html(str);
+		                  $('#modal_open_btn1').css("display", "none");
+            			alert("이미 종료된 경매입니다.");
 					} 
 					
 				},
 				error : function () {
 					console.log("error");
-					console.log(data);
 				}
     		});
     });

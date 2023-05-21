@@ -1,7 +1,7 @@
 package kr.kh.onairauction.controller;
 
 
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,25 +14,23 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.mysql.cj.Session;
-
 import kr.kh.onairauction.service.AuctionService;
-import kr.kh.onairauction.vo2.SellerLikeVO;
-import kr.kh.onairauction.vo2.AuctionRecordVO;
-import kr.kh.onairauction.vo2.AuctionVO;
-import kr.kh.onairauction.vo2.MemberVO;
-import kr.kh.onairauction.vo2.MembershipLevelVO;
-import kr.kh.onairauction.vo2.MessageVO;
-import kr.kh.onairauction.vo2.ProductLikeVO;
-import kr.kh.onairauction.vo2.ProductVO;
-import kr.kh.onairauction.vo2.ReportCategoryVO;
-import kr.kh.onairauction.vo2.ReportVO;
-import kr.kh.onairauction.vo2.VirtualAccountVO;
+import kr.kh.onairauction.vo.AuctionRecordVO;
+import kr.kh.onairauction.vo.AuctionVO;
+import kr.kh.onairauction.vo.BoardListVO;
+import kr.kh.onairauction.vo.DeliveryVO;
+import kr.kh.onairauction.vo.MemberVO;
+import kr.kh.onairauction.vo.MembershipLevelVO;
+import kr.kh.onairauction.vo.MessageVO;
+import kr.kh.onairauction.vo.AuctionOrderVO;
+import kr.kh.onairauction.vo.ProductLikeVO;
+import kr.kh.onairauction.vo.ProductVO;
+import kr.kh.onairauction.vo.ReportCategoryVO;
+import kr.kh.onairauction.vo.ReportVO;
+import kr.kh.onairauction.vo.SellerLikeVO;
+import kr.kh.onairauction.vo.VirtualAccountVO;
 
 @RestController
 @Controller
@@ -64,6 +62,8 @@ public class AirAuctionController {
 		// 3. 현재페이지에서 사용하기 위한 요소들을 찾아서  mv.addObject해준다.
 		ArrayList<ReportCategoryVO> reportCategory = auctionService.selectReportCategory();
 		ArrayList<AuctionRecordVO> auctionRecordList = auctionService.selectAuctionRecord(auction.getAu_start_date(), price, sellerId, auctionNum);
+		ArrayList<BoardListVO> boardList = auctionService.selectBoardList(user.getMe_id());
+		mv.addObject("boardList", boardList);
 		mv.addObject("reportCategory", reportCategory);
 		mv.addObject("auctionRecordList", auctionRecordList);
 		int lastAuctionRecordIndex = auctionRecordList.size()-1;
@@ -93,13 +93,11 @@ public class AirAuctionController {
 		SimpleDateFormat date = new SimpleDateFormat("yyyy. MM. dd. HH:mm:ss");
 		String now = date.format(nowTime);
 		mv.addObject("nowTime", now);
-		mv.addObject("endTime", "첫 입찰" + auction.getAu_limit_bid_time() +"초 후");
+		mv.addObject("endTime", "첫 입찰" + auction.getAu_limit_bid_time() +"초 후에 종료됩니다.");
 		if (!lastAuctionRecord.getAr_me_id().equals(auctionSeller.getMe_id())) {
 			String end = auctionService.endTime(lastAuctionRecord, auction);
-			mv.addObject("endTime", end);
+			mv.addObject("endTime", end + "에 종료됩니다.");
 		}
-		
-		
 		return mv;
 		//DB에 저장되어 있는 데이터 - 구매자, 판매자, 상품, 경매, 경매카테고리, 신고카테고리, 가상계좌
 		
@@ -114,10 +112,17 @@ public class AirAuctionController {
 	}
 	@RequestMapping(value = "/message", method=RequestMethod.POST)
 	public ModelAndView message(ModelAndView mv, MessageVO message, HttpSession session) {
-		MemberVO user = (MemberVO)session.getAttribute("user");
 		boolean register = auctionService.insertMessage(message);
 		AuctionVO a = (AuctionVO)session.getAttribute("auction");
 		mv.setViewName("redirect:/onairauction/detail/"+a.getAu_num());
+		return mv;
+	}
+	@RequestMapping(value = "/delivery", method=RequestMethod.POST)
+	public ModelAndView delivery(ModelAndView mv, int bl_num, HttpSession session) {
+		AuctionVO auction = (AuctionVO)session.getAttribute("auction");
+		AuctionOrderVO order = auctionService.insertOrder(auction);
+		auctionService.insertDelivery(order.getAo_num(), bl_num);
+		mv.setViewName("redirect:/onairauction/detail/"+auction.getAu_num());
 		return mv;
 	}
 
@@ -153,9 +158,11 @@ public class AirAuctionController {
 				boolean res = auctionService.insertBid(price, expense, userAccount, user, auctionNum);
 				map.put("res", res);
 				AuctionRecordVO lastRecord = auctionService.lastAuctionRecord(auctionNum);
+				String bidder =lastRecord.getAr_me_id();
 				double nextPrice = lastRecord.getAr_next_bid_price(price);
 				String lastTime = auctionService.endTime(lastRecord, auction);
 				String intEnd = lastTime.replaceAll("[^0-9]", "");
+				map.put("bidder", bidder);
 				map.put("intEnd", intEnd);
 				map.put("nextPrice", nextPrice);
 			}
@@ -166,7 +173,6 @@ public class AirAuctionController {
 		if(auction.getAu_final_date() != null) {
 			map.put("already", true);
 		}
-		
 		return map;
 		
 	}
