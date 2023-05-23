@@ -4,6 +4,8 @@ package kr.kh.onairauction.controller;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.inject.Inject;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -20,11 +22,10 @@ import org.springframework.stereotype.Controller;
 import kr.kh.onairauction.service.AuctionService;
 
 
-@Controller
+@Controller 
 @ServerEndpoint(value="/echo.do/{chattingChannel}/{userId}")
 public class ChatController {
-    @Autowired
-    AuctionService auctionService;
+    
    
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
     private static final Map<Integer, Map<String, Session>> roomMap = new HashMap<Integer, Map<String, Session>>();
@@ -34,13 +35,13 @@ public class ChatController {
         System.out.println("웹소켓 생성");
     }
     
-    @OnOpen //스크립트에서 소켓을 열면 자동으로 실행이 됨
+    @OnOpen //스크립트에서 소켓을 열면 자동으로 실행이 됨 //웹에서 해당이벤트가 발생하면 실행시키는 구조
     public void onOpen(Session session, @PathParam("userId") String id, @PathParam("chattingChannel") String num) {
     	
         logger.info("Participate Room:"+ num +", "+ "Open session id:" + id);
         try {
             final Basic basic=session.getBasicRemote();
-            basic.sendText("대화방에 연결되었습니다.");
+            basic.sendText("대화방에 연결되었습니다.::"+id);
         }catch (Exception e) {
             
             System.out.println(e.getMessage());
@@ -95,12 +96,12 @@ public class ChatController {
         try {
             final Basic basic=session.getBasicRemote();
             basic.sendText("<나> : "+message);
-        }catch (Exception e) {
             
-            System.out.println(e.getMessage());
+        }catch (Exception e) {
+            e.printStackTrace();
+            //System.out.println(e.getMessage());
         }
         sendAllSessionToMessage(session, sender, message, room);
-        //auctionService.insertChattingRecord(message, sender, room);
     }
     
     @OnError

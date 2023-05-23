@@ -8,6 +8,8 @@ import kr.kh.onairauction.vo.AuctionRecordVO;
 import kr.kh.onairauction.vo.AuctionVO;
 import kr.kh.onairauction.vo.BoardListVO;
 import kr.kh.onairauction.vo.ChattingVO;
+import kr.kh.onairauction.vo.DeliveryVO;
+import kr.kh.onairauction.vo.FileVO;
 import kr.kh.onairauction.vo.MemberVO;
 import kr.kh.onairauction.vo.MembershipLevelVO;
 import kr.kh.onairauction.vo.MessageVO;
@@ -78,4 +80,12 @@ public interface AuctionService {
 	ChattingVO selectChatting(int au_num);
 
 	void insertChattingRecord(String message, String sender, String room);
+
+	ArrayList<FileVO> selectFile(int productCode);
+
+	AuctionOrderVO selectAuctionOrder(int au_num);
+
+	DeliveryVO selectDelivery(int ao_num);
+
+	void updateDelivery(int ao_num, int bl_num);
 }
