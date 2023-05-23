@@ -1015,23 +1015,27 @@
         <div id="modal">
             <div class="modal_content">
               <div class="box box1">
+              <a href="javascript:shareTwitter();">
                 <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMjA3MjBfMjU2%2FMDAxNjU4Mjc5MzYwNjcw.5MVjAvre4v-ACGC7cXELJOcBA0x20xDAcxHRHJOnJY8g.8kbITvud_Ao-IhT6bEtBv95FpwSbTkZb4GiDDKukKzgg.PNG.smcho2002%2F1.png&type=sc960_832" alt="">
-                <a href="#"></a>
+               </a>
               </div>
               <div class="box box2">
+              <a href="javascript:shareFacebook();">
                 <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMTA1MzFfNjYg%2FMDAxNjIyNDY0NjMwMzg4.hY-FUGvamGoj-AcXRHGKyhdQKYehRu7Bx-nYcIlibd4g.tTMZBZsCS1nfVFlz6-uyb7u656Gf06y4mYhGzlzOwusg.PNG.futurara%2F5.png&type=sc960_832" alt="">
-                <a href="#"></a>
+              </a>
               </div>
               <div class="box box3">
+              <a href="javascript:shareInstagram();">
                 <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAxODA0MjVfMjgx%2FMDAxNTI0NjMzMTk5MTg5.LPGkH3KNG5zS5J3abfWHuCu8EXoA24cbNAcexLuWmgMg.9OJE4qEVGIG7PhfciJSB-pWbbbHHjkja-vzrxb5qfl4g.PNG.dc-club%2F%25C0%25CE%25BD%25BA%25C5%25B8%25B1%25D7%25B7%25A5.png&type=sc960_832" alt="">
-                <a href="#"></a>
+              </a>
               </div>
               <div class="box box4">
+              <a href="javascript:shareKakao();" class="btn-kakao">
                 <img src="https://search.pstatic.net/common/?src=http%3A%2F%2Fimgnews.naver.net%2Fimage%2F293%2F2018%2F11%2F30%2F0000023210_001_20181130102430310.jpg&type=sc960_832" alt="">
-                <a href="#"></a>
+              </a>
               </div>
             </div>
-            <button type="submit" id="modal_copy_btn">링크 복사하기</button>
+            
             <button type="button" id="modal_close_btn">공유 취소하기</button>
         </div>
     </div>
@@ -1176,13 +1180,7 @@
         </div>
       </div>
     </div>
-    	
-   	${intNow}
-    ${lastAuctionRecord.getAr_next_bid_price()}
-    ${sellerLikeState}
-    ${productLikeState}
-    ${boardList}
-    
+  
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 
@@ -1208,6 +1206,27 @@
     <script src="https://code.jquery.com/jquery-latest.min.js"></script><!--제이쿼리를 쓰기 위해 스크립트 참조-->
     
     <script>
+    
+    function shareFacebook() {
+    	var sendUrl = "http://localhost:8080/onairauction/onairauction/detail/1";
+    	window.open("http://www.facebook.com/sharer/sharer.php?u=" + sendUrl);
+		
+	}
+    function shareTwitter() {
+    	var sendUrl = "http://localhost:8080/onairauction/onairauction/detail/1";
+    	window.open("https://twitter.com/intent/tweet?text=" + sendUrl);
+		
+	}
+    function shareInstagram() {
+    	var sendUrl = "http://localhost:8080/onairauction/onairauction/detail/1";
+    	window.open("https://www.instagram.com/");
+		
+	}
+    function shareKakao(){
+    	var sendUrl = "http://localhost:8080/onairauction/onairauction/detail/1";
+    	window.open("https://accounts.kakao.com/login/?continue=https%3A%2F%2Fcs.kakao.com%2Fhelps%3Fservice%3D8%26locale%3Dko%26category%3D25#login" + sendUrl);
+    }
+    
         function mouseOver(obj){ //css에서 :hover를 이용해서 표현할 수도 있음.
             obj.style.fontSize = "20px"
             obj.style.fontWeight = "bold"
@@ -1729,33 +1748,39 @@
         var messages = document.getElementById("messages");
         
         function openSocket(){
-            if(ws !== undefined && ws.readyState !== WebSocket.CLOSED ){
-                writeResponse("WebSocket is already opened.");
-                console.log();
-                console.log();
-                return;
-            }
-            //웹소켓 객체 만드는 코드 - 서버의 @OnOpen을 실행시킴
-            ws = new WebSocket("ws://localhost:8080/onairauction/echo.do/${chattingChannel}/${userId}");
-            
-            ws.onopen = function(event){
-                if(event.data === undefined){
-              		return;
-                }
-                writeResponse(event.data);
-            };
-            
-            ws.onmessage = function(event){ 
-                console.log('writeResponse');
-                console.log(event.data)
-                writeResponse(event.data);
-                console.log();
-            };
-            
-            ws.onclose = function(event){
-                writeResponse("대화 종료");
-            }
-            
+        	try {
+				
+			
+	            if(ws !== undefined && ws.readyState !== WebSocket.CLOSED ){
+	                writeResponse("WebSocket is already opened.");
+	                console.log();
+	                console.log();
+	                return;
+	            }
+	            //웹소켓 객체 만드는 코드 - 서버의 @OnOpen을 실행시킴
+	            ws = new WebSocket("ws://localhost:8080/onairauction/echo.do/${chattingChannel}/${userId}");
+	            
+	            ws.onopen = function(event){
+	                if(event.data === undefined){
+	              		return;
+	                }
+	                writeResponse(event.data);
+	            };
+	            
+	            ws.onmessage = function(event){ 
+	                console.log('writeResponse');
+	                console.log(event.data)
+	                writeResponse(event.data);
+	                console.log();
+	            };
+	            
+	            ws.onclose = function(event){
+	                writeResponse("대화 종료");
+	            }
+        	} catch (e) {
+				// TODO: handle exception
+				console.log(e)
+			}
         }
         
         function send(){ 
@@ -1796,7 +1821,6 @@
         function writeResponse(text){
             messages.innerHTML += "<br>"+text;
         }
-
         
   </script>
 

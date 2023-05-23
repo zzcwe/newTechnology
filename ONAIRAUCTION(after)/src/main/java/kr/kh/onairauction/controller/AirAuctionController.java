@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.mysql.cj.Session.SessionEventListener;
 
 import kr.kh.onairauction.service.AuctionService;
 import kr.kh.onairauction.vo.AuctionRecordVO;
@@ -112,8 +112,8 @@ public class AirAuctionController {
 		ChattingVO channel = auctionService.selectChatting(au_num);
 		String userId = user.getMe_id();
 		int chattingChannel = channel.getCh_num();
-		session.setAttribute("chattingChannel", chattingChannel);
-		session.setAttribute("userId", userId);
+		mv.addObject("chattingChannel", chattingChannel);
+		mv.addObject("userId", userId);
 		return mv;
 		//DB에 저장되어 있는 데이터 - 구매자, 판매자, 상품, 경매, 경매카테고리, 신고카테고리, 가상계좌
 		
