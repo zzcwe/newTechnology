@@ -320,7 +320,7 @@ public class AuctionServiceImp implements AuctionService {
 	}
 	@Override
 	public AuctionOrderVO insertOrder(AuctionVO auction) {
-		int num = auction.getAu_ac_num();
+		int num = auction.getAu_num();
 		AuctionRecordVO last = lastAuctionRecord(auction.getAu_num());
 		String auctionBidder = last.getAr_me_id();
 		auctionDAO.insertOrder(auctionBidder, num);
