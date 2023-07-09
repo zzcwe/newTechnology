@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ <mapper namespace="kr.kr.OnAirAuction.DAO.GeneralDAO">
+ 	<!-- 일반 경매 목록 - 상품 리스트 가져오기 -->
+ 	<select id="selectGeneralList" resultType="kr.kr.OnAirAuction.VO.ProductVO">
+ 		SELECT * FROM auction
+			JOIN product ON au_pr_code = pr_code
+		    JOIN auction_category ON au_ac_num = ac_num
+		    WHERE au_ac_num = 1
+ 	</select>
+
+	<!-- 일반 경매 목록 - 일반 경매의 전체의 수  -->
+ 	<select id="selectTotalCountProduct" resultType="int">
+ 		SELECT count(*) FROM auction
+			JOIN product ON au_pr_code = pr_code
+		    JOIN auction_category ON au_ac_num = ac_num
+		    WHERE au_ac_num = 1
+ 	</select>
+
+ 	<!-- 일반 경매 상품 - 상품 상세페이지 가져오기 -->
+	<select id="selectGeneral" resultType="kr.kr.OnAirAuction.VO.ProductVO">
+		SELECT * FROM product 
+			WHERE pr_code = #{pr_code}
+	</select>
+	
+ 	<!-- 일반 경매 카테고리 - 상품 카테고리 가져오기 -->
+ 	<select id="selectProdCategory" resultType="kr.kr.OnAirAuction.VO.ProdCategoryVO">
+	 	SELECT psc_name, pmc_name, pc_name FROM product
+			JOIN product_category ON pr_pc_num = pc_num
+			JOIN product_small_category ON pc_psc_num = psc_num
+			JOIN product_middle_category ON psc_pmc_num = pmc_num
+			WHERE pr_code = #{pc_num}
+ 	</select>
+ 	
+ 	<!-- 경매 정보 - 상품의 경매 정보 가져오기 -->
+ 	<select id="selectAuction" resultType="kr.kr.OnAirAuction.VO.AuctionVO">
+		SELECT * FROM auction
+			JOIN product ON au_pr_code = pr_code
+			WHERE au_num = #{au_num}
+ 	</select>
+ 	
+  	<!-- 스토어 정보 - 스토어 정보 가져오기 -->
+  	<select id="selectStore" resultType="kr.kr.OnAirAuction.VO.StoreVO">
+  		SELECT * FROM store
+			JOIN product ON st_num = pr_code
+			WHERE st_num = #{pr_code}
+  	</select>
+ 	
+  	<!-- 경매 기록 - 경매 기록 가져오기 -->
+  	<select id="selectAuctionRecord" resultType="kr.kr.OnAirAuction.VO.AuctionRecordVO">
+	  	SELECT * FROM auction_record
+			JOIN product on pr_code = ar_au_num
+			WHERE pr_code = #{pr_code}
+  	</select>
+  	
+  	<!-- 경매 최근 기록 - 경매 최근 기록 가져오기 -->
+  	<select id="selectAuctionRecordList" resultType="kr.kr.OnAirAuction.VO.AuctionRecordVO">
+  		SELECT * FROM auction_record
+  	</select>
+ 	
+ 	<!-- 이미지 파일 - 상품의 이미지 가져오기 -->
+ 	<select id="selectProdFileList" resultType="kr.kr.OnAirAuction.VO.FileVO">
+		SELECT * FROM file
+			JOIN product ON fi_table_num = pr_code
+			WHERE fi_table_num = #{pr_code} and fi_table_name = '상품'
+ 	</select>
+ 	
+ 	<!-- 상품 후기 - 판매자의 리뷰 가져오기 -->
+ 	<select id="selectReview" resultType="kr.kr.OnAirAuction.VO.ReviewVO">
+ 		SELECT re_satisfaction, re_title, re_content, re_registration FROM review 
+			JOIN store ON re_st_num = st_num
+		    WHERE re_st_num = #{pr_code}
+ 	</select>
+ 	
+ 	<!-- 입찰하기: 가상계좌 -->
+ 	<select id="selectUserAccount" resultType="kr.kr.OnAirAuction.VO.VirtualAccountVO">
+  		SELECT * FROM virtual_account
+  			WHERE va_me_id = #{id}
+ 	</select>
+ 	
+ 	<!-- 입찰하기: 회원등급 -->
+ 	<select id="selectMembership" resultType="kr.kr.OnAirAuction.VO.MembershipLevelVO">
+ 		SELECT * FROM membership_level
+ 			WHERE ml_name = #{membershipName}
+ 	</select>
+ 	
+ 	<!-- 입찰하기: 입찰 등록 -->
+ 	<insert id="insertAuctionRecord">
+ 		INSERT INTO auction_record(ar_bid_time, ar_bid_price, ar_me_id, ar_au_num)
+	  		VALUES(now(), #{price}, #{id}, #{auctionNum})
+ 	</insert>
+ 	
+ 	<!-- 상품 문의 - 상품 문의 가져오기 -->
+  	<select id="selectInquiry" resultType="kr.kr.OnAirAuction.VO.InquiryVO">
+		SELECT in_num, ic_name, in_title, in_content, in_register_date, in_me_id, in_ic_num FROM inquiry
+			JOIN inquiry_category ON in_ic_num = ic_num
+			JOIN product ON in_pr_code = pr_code
+			WHERE pr_code = #{pr_code}
+  	</select>
+ 	
+	<!-- 상품 문의 목록 - 일반 경매의 상품 문의 게시물의 수  -->
+ 	<select id="selectTotalCountInquiry" resultType="int">
+ 		SELECT count(*) FROM inquiry
+			JOIN inquiry_category ON in_ic_num = ic_num
+			JOIN product ON in_pr_code = pr_code
+			WHERE pr_code = 1
+ 	</select>
+ 	
+	<!-- 상품 후기 목록 - 판매자의 후기 게시물의 수  -->
+ 	<select id="selectTotalCountReview" resultType="int">
+ 		SELECT count(*) FROM review
+			JOIN store ON re_st_num = st_num
+			WHERE re_st_num = 1
+ 	</select>
+ 	
+ 	<!-- 상품 좋아요: 상품 좋아요 조회 -->
+ 	<select id="selectProductLike" resultType="kr.kr.OnAirAuction.VO.ProductLikeVO">
+ 		select * from product_like where pl_pr_code = #{productCode} and pl_me_id = #{userId}
+ 	</select>
+ 	
+ 	<!-- 상품 좋아요: 상품 좋아요 등록 -->
+ 	<insert id="insertProductLike">
+ 		insert into product_like(pl_pr_code, pl_me_id, pl_state)
+	  		values(#{productCode}, #{userId}, #{num})
+ 	</insert>
+ 	
+ 	<!-- 판매자 좋아요: 판매자 좋아요 수정 -->
+ 	<update id="updateProductLike">
+ 		update product_like
+  			set
+  				pl_state = #{productLikeState}
+  			where
+  				pl_pr_code = #{p.pl_pr_code} and pl_me_id = #{p.pl_me_id}
+ 	</update>
+</mapper>
