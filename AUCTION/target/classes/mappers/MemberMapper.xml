@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.th.auction.dao.MemberDAO">
+	<select id="selectMemberById" resultType="kr.th.auction.vo.MemberVO">
+  		select * from member where me_id = #{me_id}
+  	</select>
+  	<insert id="insertCertification">
+  		insert into certification(ce_me_id, ce_certification_number, ce_time)
+  			values(#{mok.ce_me_id},#{mok.ce_certification_number},
+  				date_add(#{mok.ce_time},interval 1 hour))
+  	</insert>
+  	<select id="selectCertification" resultType="kr.th.auction.vo.CertificationVO">
+  		select * from certification 
+  			where ce_me_id = #{mok.ce_me_id} 
+  				and ce_certification_number = #{mok.ce_certification_number}
+  				and ce_time >= now()
+  	</select>
+  	<insert id="insertMember">
+  		insert into member(me_id, me_pw, me_name, me_email, me_phone, me_birth, me_post_num, me_road_name, me_detail_address)
+  		values(#{m.me_id},#{m.me_pw},#{m.me_name},#{m.me_email},#{m.me_phone},#{m.me_birth},#{m.me_post_num},#{m.me_road_name},#{m.me_detail_address})
+  	</insert>
+  	<delete id="deleteCertification">
+  		delete from certification 
+  			where ce_me_id = #{mok.ce_me_id} and ce_certification_number = #{mok.ce_certification_number}
+  	</delete>
+  	<update id="updateAuthority">
+  		update member
+  			set
+  				me_authority = #{me_authority}
+  			where
+  				me_id = #{me_id}
+  	</update>
+  	<insert id="insertBoard">
+  		insert into board_list (bl_me_id, bl_post_num, bl_road_name, bl_detail_address)
+		select ce_me_id, me_post_num, me_road_name, me_detail_address from certification join member on ce_me_id = me_id where ce_me_id = #{ce_me_id}
+  	</insert>
+  	<update id="updateJoinTime">
+  		update member
+  			set
+  				me_join_time = now()
+  			where
+  				me_id = #{me_id}
+  	</update>
+  	<select id="selectBoardList" resultType="kr.th.auction.vo.BoardListVO">
+  		select * from board_list where bl_me_id = #{me_id} order by bl_num asc limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<select id="selectBoardTotalCount" resultType="int">
+		select count(*) from board_list where bl_me_id = #{me_id}
+	</select>
+</mapper>

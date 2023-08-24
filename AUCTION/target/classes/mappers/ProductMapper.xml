@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.th.auction.dao.ProductDAO">
+	<select id="selectStore" resultType="kr.th.auction.vo.StoreVO">
+  		select * from store where st_me_id = #{me_id}
+  	</select>
+  	<select id="selectStoreById" resultType="kr.th.auction.vo.StoreVO">
+  		select * from store where st_name = #{st_name}
+  	</select>
+  	<insert id="insertStore">
+  		insert into store(st_name, st_intro, st_me_id)
+  			values(#{store.st_name}, #{store.st_intro}, #{userId})
+  	</insert>
+  	<select id="selectMiddleCategory" resultType="kr.th.auction.vo.ProductMiddleCategoryVO">
+  		select * from product_middle_category
+  			where pmc_plc_num = #{plc_num}
+  	</select>
+  	<select id="selectSmallCategory" resultType="kr.th.auction.vo.ProductSmallCategoryVO">
+  		select * from product_small_category
+  			where psc_pmc_num = #{pmc_num}
+  	</select>
+  	<select id="selectCategory" resultType="kr.th.auction.vo.ProductCategoryVO">
+  		select * from product_category
+  			where pc_psc_num = #{psc_num}
+  	</select>
+  	<insert id="insertProduct" useGeneratedKeys="true" keyProperty="p.pr_code">
+		insert into product(pr_code, pr_name, pr_intro, pr_condition, pr_detail, pr_location, pr_refund_ok, pr_refund_date, 
+				pr_refund_reason, pr_start_price, pr_origin, pr_size, pr_pc_num, pr_st_num)
+  		select ifnull(max(pr_code),0)+1, #{p.pr_name}, #{p.pr_intro}, #{p.pr_condition}, #{p.pr_detail}, #{p.pr_location}, #{p.pr_refund_ok}, #{p.pr_refund_date}, 
+  				#{p.pr_refund_reason}, #{p.pr_start_price}, #{p.pr_origin}, #{p.pr_size}, #{p.pr_pc_num}, #{p.pr_st_num}
+  		from product
+	</insert>
+	<insert id="insertFile">
+		insert into file(fi_num, fi_name, fi_save_name, fi_table_name, fi_table_num)
+		select ifnull(max(fi_num),0)+1, #{f.fi_name}, #{f.fi_save_name}, '상품', #{pr_code}
+  		from file
+	</insert>
+  	<select id="selectProductList" resultType="kr.th.auction.vo.ProductVO">
+  		select * from product order by pr_code asc limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>	
+	<select id="selectProductTotalCount" resultType="int">
+		select count(*) from product
+	</select>
+	<select id="selectProduct" resultType="kr.th.auction.vo.ProductVO">
+		select * from product where pr_code = #{pr_code}
+	</select>
+	<select id="selectFileList" resultType="kr.th.auction.vo.FileVO">
+		select * from file where fi_table_num = #{pr_code}
+	</select>
+	<delete id="deleteProduct">
+		delete from product where pr_code = #{pr_code}
+	</delete>
+	<delete id="deleteFile">
+		delete from file where fi_num = #{file.fi_num}
+	</delete>
+	<update id="updateProduct">
+		update product 
+		set pr_name = #{product.pr_name}, pr_intro = #{product.pr_intro}, pr_condition = #{product.pr_condition}, pr_detail = #{product.pr_detail}, 
+			pr_location = #{product.pr_location}, pr_refund_ok = #{product.pr_refund_ok}, pr_refund_date = #{product.pr_refund_date},
+			pr_refund_reason = #{product.pr_refund_reason}, pr_start_price = #{product.pr_start_price}, pr_origin = #{product.pr_origin}, pr_size = #{product.pr_size}
+		where pr_code = #{product.pr_code}
+	</update>
+	<select id="selectFile" resultType="kr.th.auction.vo.FileVO">
+		select * from file where fi_num = #{fi_num}
+	</select>
+	<select id="selectProductListName" resultType="kr.th.auction.vo.ProductVO">
+  		select * from product where pr_name = #{pr_name} order by pr_code asc limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<select id="selectProductListIntro" resultType="kr.th.auction.vo.ProductVO">
+  		select * from product where pr_intro = #{pr_intro} order by pr_code asc limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<select id="selectProductListLocation" resultType="kr.th.auction.vo.ProductVO">
+  		select * from product where pr_location = #{pr_location} order by pr_code asc limit #{cri.pageStart}, #{cri.perPageNum}
+	</select>
+	<select id="selectProductTotalCountName" resultType="int">
+		select count(*) from product where pr_name = #{pr_name}
+	</select>
+	<select id="selectProductTotalCountIntro" resultType="int">
+		select count(*) from product where pr_intro = #{pr_intro}
+	</select>
+	<select id="selectProductTotalCountLocation" resultType="int">
+		select count(*) from product where pr_location = #{pr_location}
+	</select>
+</mapper>

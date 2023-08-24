@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.th.auction.dao.AdminDAO">
+	<select id="selectLargeCategory" resultType="kr.th.auction.vo.ProductLargeCategoryVO">
+	  select * from product_large_category
+	</select>
+	<select id="selectMiddleCategory" resultType="kr.th.auction.vo.ProductMiddleCategoryVO">
+	  select * from product_middle_category
+	</select>
+	<select id="selectSmallCategory" resultType="kr.th.auction.vo.ProductSmallCategoryVO">
+	  select * from product_small_category
+	</select>
+	<select id="selectProductCategory" resultType="kr.th.auction.vo.ProductCategoryVO">
+	  select * from product_category
+	</select>
+	<insert id="insertLargeCategory">
+	 	insert into product_large_category(plc_num, plc_name) 
+	 		values(#{l.plc_num}, #{l.plc_name})
+	</insert>
+	<insert id="insertMiddleCategory">
+	 	insert into product_middle_category(pmc_name, pmc_plc_num) 
+	 		values(#{m.pmc_name}, #{m.pmc_plc_num})
+	</insert>
+	<insert id="insertSmallCategory">
+	 	insert into product_small_category(psc_name, psc_pmc_num) 
+	 		values(#{s.psc_name}, #{s.psc_pmc_num})
+	</insert>
+	<insert id="insertFinalCategory">
+	 	insert into product_category(pc_name, pc_psc_num) 
+	 		values(#{f.pc_name}, #{f.pc_psc_num})
+	</insert>
+</mapper>
