@@ -1,8 +1,8 @@
-DROP database if exists OnAirAuction;
+DROP database if exists auction;
 
-create database if not exists OnAirAuction;
+create database if not exists auction;
 
-use OnAirAuction;
+use auction;
 
 DROP TABLE IF EXISTS `member`;
 
@@ -10,17 +10,17 @@ CREATE TABLE `member` (
 	`me_id`	varchar(20)	NOT NULL,
 	`me_pw`	varchar(255) NOT NULL,
 	`me_email`	varchar(50) NOT NULL,
-    	`me_post_num` varchar(70) NOT NULL,
-    	`me_road_name` varchar(70) NOT NULL,
-    	`me_detail_address` varchar(70) NOT NULL,
+    `me_post_num` varchar(70) NOT NULL,
+    `me_road_name` varchar(70) NOT NULL,
+    `me_detail_address` varchar(70) NOT NULL,
 	`me_phone`	varchar(20)	NOT NULL,
 	`me_name`	varchar(20)	NOT NULL,
 	`me_birth`	date NOT NULL,
 	`me_certification`	int default 0 NULL,
 	`me_authority`	int default 0 NULL,
 	`me_account`	varchar(30)	NULL,
-    	`me_complation_number` int default 0 NULL,
-    	`me_reported_number` int default 0 NULL,
+    `me_complation_number` int default 0 NULL,
+    `me_reported_number` int default 0 NULL,
 	`me_join_time`	datetime	NULL,
 	`me_region`	varchar(100)	NULL,
 	`me_customer_certification`	varchar(20)	NULL,
@@ -41,7 +41,8 @@ CREATE TABLE `product` (
 	`pr_refund_ok`	varchar(100) NOT NULL,
 	`pr_refund_date`	varchar(100) NOT NULL,
 	`pr_refund_reason`	longtext NOT NULL,
-	`pr_state`	varchar(20) default '시작전'	NULL,
+	`pr_auction_state`	varchar(20) default '시작전'	NULL,
+    `pr_auction_register` int default 0	NULL,
 	`pr_start_price`	int	NOT NULL,
 	`pr_origin`	varchar(50)	NOT NULL,
 	`pr_size`	varchar(100) NOT NULL,
@@ -255,7 +256,7 @@ DROP TABLE IF EXISTS `virtual_account`;
 CREATE TABLE `virtual_account` (
 	`va_me_id`	varchar(20)	NOT NULL,
 	`va_holding_amount`	int	default 0 NULL,
-	`va_pw`	varchar(50)	NOT NULL
+	`va_pw`	varchar(255)	NOT NULL
 );
 
 DROP TABLE IF EXISTS `auction_record`;
@@ -313,8 +314,8 @@ CREATE TABLE `board_list` (
 	`bl_num`	int auto_increment	NOT NULL primary key,
 	`bl_name`	varchar(30)	NOT NULL,
 	`bl_post_num` varchar(70) NOT NULL,
-    	`bl_road_name` varchar(70) NOT NULL,
-    	`bl_detail_address` varchar(70) NOT NULL,
+    `bl_road_name` varchar(70) NOT NULL,
+    `bl_detail_address` varchar(70) NOT NULL,
 	`bl_me_id`	varchar(20)	NOT NULL
 );
 
@@ -342,7 +343,7 @@ CREATE TABLE `withdraw` (
 	`wi_amount`	int NOT NULL,
 	`wi_withdraw_date`	datetime NOT NULL,
 	`wi_withdraw_reason`	varchar(50) NOT NULL,
-    	`wi_va_me_id`	varchar(20)	NOT NULL
+    `wi_va_me_id`	varchar(20)	NOT NULL
 );
 
 DROP TABLE IF EXISTS `message`;
@@ -369,7 +370,7 @@ DROP TABLE IF EXISTS `chatting_attend`;
 
 CREATE TABLE `chatting_attend` (
 	`ca_ch_num`	int	NOT NULL,
-    	`ca_me_id`	varchar(20)	NOT NULL
+    `ca_me_id`	varchar(20)	NOT NULL
 );
 
 ALTER TABLE `member` ADD CONSTRAINT `PK_MEMBER` PRIMARY KEY (
