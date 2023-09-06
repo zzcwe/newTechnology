@@ -1,9 +1,12 @@
-package kr.kh.onairauction.controller;
+package kr.kh.chatting;
 
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -12,32 +15,29 @@ import javax.websocket.RemoteEndpoint.Basic;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-
-import kr.kh.onairauction.service.AuctionService;
 
 
 @Controller
-@ServerEndpoint(value="/echo.do/{chattingChannel}/{userId}")
-public class ChatController {
-    @Autowired
-    AuctionService auctionService;
+@ServerEndpoint(value="/echo.do/{roomNumber}/{userId}")
+public class WebSocketChat {
+    
    
-    private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketChat.class);
     private static final Map<Integer, Map<String, Session>> roomMap = new HashMap<Integer, Map<String, Session>>();
 
-    public ChatController() {
+    public WebSocketChat() {
  
         System.out.println("웹소켓 생성");
     }
     
     @OnOpen //스크립트에서 소켓을 열면 자동으로 실행이 됨
-    public void onOpen(Session session, @PathParam("userId") String id, @PathParam("chattingChannel") String num) {
+    public void onOpen(Session session, @PathParam("userId") String id, @PathParam("roomNumber") String num) {
     	
-        logger.info("Participate Room:"+ num +", "+ "Open session id:" + id);
+        logger.info("Participate Room:"+ num +", "+ "Open session id:"+id);
         try {
             final Basic basic=session.getBasicRemote();
             basic.sendText("대화방에 연결되었습니다.");
@@ -52,6 +52,7 @@ public class ChatController {
     		roomMemberMap = new HashMap<String, Session>();
     	roomMemberMap.put(id, session);
     	roomMap.put(roomNum, roomMemberMap);
+        System.out.println(roomMap);
         
     }
     
@@ -100,7 +101,6 @@ public class ChatController {
             System.out.println(e.getMessage());
         }
         sendAllSessionToMessage(session, sender, message, room);
-        //auctionService.insertChattingRecord(message, sender, room);
     }
     
     @OnError
