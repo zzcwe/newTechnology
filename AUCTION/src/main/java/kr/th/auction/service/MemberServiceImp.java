@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import kr.th.auction.vo.BoardListVO;
 import kr.th.auction.vo.CertificationVO;
+import kr.th.auction.vo.ChargeVO;
 import kr.th.auction.vo.MemberVO;
+import kr.th.auction.vo.VirtualAccountVO;
 import kr.th.auction.dao.MemberDAO;
 import kr.th.auction.pagination.Criteria;
 
@@ -25,6 +27,16 @@ public class MemberServiceImp implements MemberService{
 	@Autowired
 	BCryptPasswordEncoder passwordEncoder;
 	
+	@Override
+	public boolean insertVirtualAccount(VirtualAccountVO account) {
+		if(account == null)
+			return false;
+		String newPw = passwordEncoder.encode(account.getVa_pw());
+		account.setVa_pw(newPw);
+		if(memberDao.insertVirtualAccount(account) != 0)
+			return true;
+		return false;
+	}
 	@Override
 	public boolean signup(MemberVO member) {
 		if(member == null)
@@ -49,7 +61,7 @@ public class MemberServiceImp implements MemberService{
 		CertificationVO mok = new CertificationVO(me_id, str);
 		memberDao.insertCertification(mok);
 		
-		String title = "[OnairAuction]이메일 인증 메일입니다.";
+		String title = "[OnAirAuction]이메일 인증 메일입니다.";
 		String content = 
 			"다음 링크를 클릭해서 이메일 인증을 완료하세요.<br>" + 
 			"<a href='http://localhost:8080/auction/email?ce_certification_number="+str+"&ce_me_id="+me_id+"'>이메일 인증하기</a>";
@@ -108,7 +120,7 @@ public class MemberServiceImp implements MemberService{
 			memberDao.deleteCertification(mok);
 			//member테이블에서 해당 회원의 권한을 1로 등급업
 			memberDao.updateAuthority(mok.getCe_me_id(), 1);
-			memberDao.updateJoinTime(mok.getCe_me_id());
+			memberDao.updateJoinTime(mok.getCe_me_id(), "일반");
 			return true;
 		}
 		return false;
@@ -132,5 +144,15 @@ public class MemberServiceImp implements MemberService{
 	@Override
 	public int getBoardTotalCount() {
 		return memberDao.selectBoardTotalCount();
+	}
+	@Override
+	public void insertCharge(ChargeVO chargeVO) {
+		memberDao.insertCharge(chargeVO);
+		
+	}
+	@Override
+	public void updateVirtual(String me_id, int ch_amount) {
+		memberDao.updateVirtual(me_id, ch_amount);
+		
 	}
 }

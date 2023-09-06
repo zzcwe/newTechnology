@@ -31,4 +31,8 @@
 	 	insert into product_category(pc_name, pc_psc_num) 
 	 		values(#{f.pc_name}, #{f.pc_psc_num})
 	</insert>
+	<insert id="insertMembership">
+	 	insert into membership_level(ml_name, ml_expense, ml_up_count) 
+	 		values(#{l.ml_name}, #{l.ml_expense}, #{l.ml_up_count})
+	</insert>
 </mapper>

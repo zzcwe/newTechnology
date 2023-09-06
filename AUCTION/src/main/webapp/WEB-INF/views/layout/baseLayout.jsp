@@ -15,7 +15,7 @@
 	<!--<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'></c:url>"></script> -->
 </head>
 <style>
-.tap{margin: 30px 0 30px 0;}	
+.tap{margin: 30px 0 10px 0;}	
 }
 </style>
 <body>

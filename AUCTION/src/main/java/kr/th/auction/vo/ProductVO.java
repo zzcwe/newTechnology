@@ -16,6 +16,7 @@ public class ProductVO {
 	String pr_refund_date;
 	String pr_refund_reason;
 	String pr_auction_state;
+	int pr_auction_register;
 	int pr_start_price;
 	String pr_origin;
 	String pr_size;

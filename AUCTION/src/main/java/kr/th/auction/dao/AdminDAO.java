@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Param;
 
+import kr.th.auction.vo.MembershipLevelVO;
 import kr.th.auction.vo.ProductCategoryVO;
 import kr.th.auction.vo.ProductLargeCategoryVO;
 import kr.th.auction.vo.ProductMiddleCategoryVO;
@@ -26,5 +27,7 @@ public interface AdminDAO {
 	void insertSmallCategory(@Param("s")ProductSmallCategoryVO newCategory);
 
 	void insertFinalCategory(@Param("f")ProductCategoryVO newCategory);
+
+	boolean insertMembership(@Param("l") MembershipLevelVO level);
 
 }

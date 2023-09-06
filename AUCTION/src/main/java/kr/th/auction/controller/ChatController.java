@@ -1,5 +1,4 @@
-package kr.kr.OnAirAuction.Controller;
-
+package kr.th.auction.controller;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import kr.kr.OnAirAuction.Service.AirAuctionService;
+import kr.th.auction.service.AuctionService;
 
 
 @Controller 

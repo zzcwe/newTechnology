@@ -59,15 +59,14 @@ public class ProductController {
 		
 		System.out.println(product); //pr_code = 0 
 		boolean res = productService.insertProduct(product, files);
+		System.out.println(product); //pr_code ->DB들어갔다가 나온 값으로 수정
 		if(product != null) {
 			response.setContentType("text/html; charset=UTF-8");
 			PrintWriter out = response.getWriter();
-			out.println("<script>alert('상품이 등록되었습니다.');location.href='/auction/'</script>");
+			out.println("<script>alert('상품이 등록되었습니다.');location.href='/auction/product/register'</script>");
 			out.flush();
-			System.out.println(product); //pr_code ->DB들어갔다가 나온 값으로 수정
-			System.out.println(files);
 		}
-		mv.setViewName("redirect:/");
+		mv.setViewName("redirect:/product/register");
 		return mv;
 	}
 	@ResponseBody

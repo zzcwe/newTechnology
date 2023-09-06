@@ -1,6 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<style>
+.navbar navbar-expand-sm bg-dark navbar-dark{
+width: 100%
+}
+
+</style>
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
 	<!-- Brand/logo -->
 	<a class="navbar-brand" href="<c:url value='/'></c:url>">
@@ -21,25 +27,25 @@
 		<li class="nav-item">
 			<a class="nav-link" href="<c:url value='#'></c:url>">일반경매</a>
 		</li>
-		</c:if>
-		<c:if test="${user != null }">
 		<li class="nav-item">
-			<a class="nav-link" href="<c:url value='#'></c:url>">실시간경매</a>
+			<a class="nav-link" href="<c:url value='/auction/list'></c:url>">실시간경매</a>
 		</li>
-		</c:if>
-		<c:if test="${user != null }">
+		<li class="nav-item">
+			<a class="nav-link" href="<c:url value='#'></c:url>">직거래경매</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="<c:url value='#'></c:url>">인원수제한경매</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="<c:url value='#'></c:url>">VIP경매</a>
+		</li>
 		<li class="nav-item">
 			<a class="nav-link" href="<c:url value='#'></c:url>">역경매</a>
 		</li>
 		</c:if>
 		<c:if test="${user != null }">
 		<li class="nav-item">
-			<a class="nav-link" href="<c:url value='#'></c:url>">직거래경매</a>
-		</li>
-		</c:if>
-		<c:if test="${user != null }">
-		<li class="nav-item">
-			<a class="nav-link" href="<c:url value='/product/list'></c:url>">경매 상품리스트</a>
+			<a class="nav-link" href="<c:url value='/product/list'></c:url>">상품리스트</a>
 		</li>
 		</c:if>
 		<c:if test="${user != null }">
@@ -60,7 +66,7 @@
 		</c:if>
 		<c:if test="${user != null }">
 		<li class="nav-item">
-			<a class="nav-link" href="<c:url value='/myPage'></c:url>">계좌충전</a>
+			<a class="nav-link" href="<c:url value='/charge'></c:url>">계좌충전</a>
 		</li>
 		</c:if>
 		<c:if test="${user != null }">
@@ -75,7 +81,7 @@
 				</a>
 				<div class="dropdown-menu">
 					<a class="dropdown-item" href="<c:url value='/admin/category'></c:url>">카테고리 관리</a>
-					<a class="dropdown-item" href="#">등급 관리</a>
+					<a class="dropdown-item" href="<c:url value='/admin/membership/level'></c:url>">등급 관리</a>
 					<a class="dropdown-item" href="#">입찰단위 관리</a>
 				</div>
 		    </li>

@@ -67,7 +67,7 @@
 	<div class="container-h1">
 		<h1>배송지 리스트</h1>
 	</div>
-	<form action="<c:url value='/board/delete'></c:url>" method="post">
+	<form action="<c:url value='/board/delete'></c:url>" method="post" class="board_delete">
 	<div class="container-table">
 		<table class="table table-hover">
 			<thead>
@@ -144,6 +144,7 @@
 <script src="<c:url value='/resources/js/additional-methods.min.js'></c:url>"></script>
 <script src="<c:url value='/resources/js/jquery-ui.min.js'></c:url>"></script>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="https://kit.fontawesome.com/e411ce92be.js" crossorigin="anonymous"></script>
 <script>
 $('.board_plus').validate({
 		rules:{
@@ -249,4 +250,15 @@ $(function(){
         alert("주소가 저장되었습니다.")
     })*/
 })
+$('.board_delete').submit(function(){
+	
+	if(!boardCheck){
+		alert('삭제할 배송지명을 선택해주세요.');
+		return false;
+	}
+})
+$('[name=bl_num]').change(function(){
+	boardCheck = true;
+});
+let boardCheck = false;
 </script>

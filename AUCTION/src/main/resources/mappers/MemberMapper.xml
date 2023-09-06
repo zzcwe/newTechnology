@@ -39,7 +39,8 @@
   	<update id="updateJoinTime">
   		update member
   			set
-  				me_join_time = now()
+  				me_join_time = now(),
+  				me_ml_name = #{me_ml_name}
   			where
   				me_id = #{me_id}
   	</update>
@@ -49,4 +50,28 @@
 	<select id="selectBoardTotalCount" resultType="int">
 		select count(*) from board_list where bl_me_id = #{me_id}
 	</select>
+	<insert id="insertBoardPlus">
+  		insert into board_list (bl_name, bl_post_num, bl_road_name, bl_detail_address, bl_me_id)
+			values(#{bo.bl_name}, #{bo.bl_post_num},#{bo.bl_road_name},#{bo.bl_detail_address},#{bo.bl_me_id})
+  	</insert>
+  	<delete id="deleteBoard">
+		delete from board_list where bl_num = #{bl_num}
+  	</delete>
+  	<select id="selectAccount" resultType="kr.th.auction.vo.VirtualAccountVO">
+		select * from virtual_account where va_me_id = #{me_id}
+	</select>
+	<insert id="insertVirtualAccount">
+  		insert into virtual_account (va_me_id, va_pw)
+			values(#{va.va_me_id},#{va.va_pw})
+  	</insert>
+  	<insert id="insertCharge" parameterType="kr.th.auction.vo.ChargeVO">
+		insert into charge(ch_amount, ch_method, ch_charge_date, ch_va_me_id) values(#{ch_amount}, #{ch_method}, now(),#{ch_va_me_id})
+	</insert>
+	<update id="updateVirtual">
+  		update virtual_account
+  			set
+  				va_holding_amount = va_holding_amount + #{ch_amount}
+  			where
+  				va_me_id = #{me_id}
+  	</update>
 </mapper>

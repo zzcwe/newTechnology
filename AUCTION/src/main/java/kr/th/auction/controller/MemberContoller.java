@@ -3,6 +3,7 @@ package kr.th.auction.controller;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,12 +16,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.th.auction.vo.CertificationVO;
+import kr.th.auction.vo.ChargeVO;
 import kr.th.auction.vo.MemberVO;
+import kr.th.auction.vo.VirtualAccountVO;
 import kr.th.auction.vo.BoardListVO;
+import kr.th.auction.dao.MemberDAO;
 import kr.th.auction.pagination.Criteria;
 import kr.th.auction.pagination.PageMaker;
 import kr.th.auction.service.MemberService;
@@ -30,6 +35,9 @@ public class MemberContoller {
 	
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+	MemberDAO memberDao;
 	
 	@RequestMapping(value = "/signup", method=RequestMethod.GET) //url이나 a링크를 통해 이동할 경우, 요청방식 GET방식이기때문에 GET방식인 리퀘스트매핑이 필요함
 	public ModelAndView signup(ModelAndView mv) {
@@ -128,5 +136,66 @@ public class MemberContoller {
 		mv.addObject("pm", pm);
 		mv.setViewName("/member/boardList");
 		return mv;
+	}
+	@RequestMapping(value = "/board/plus", method=RequestMethod.POST) 
+	public ModelAndView boardPlus(ModelAndView mv, HttpServletResponse response, BoardListVO board) throws IOException  {
+		System.out.println(board);
+		if(memberDao.insertBoardPlus(board)) {
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			out.println("<script>alert('배송지가 추가되었습니다.');location.href='/auction/board/list'</script>"); 
+			out.flush();
+		}
+		mv.setViewName("redirect:/board/list");
+		return mv;
+	}
+	@RequestMapping(value = "/board/delete", method=RequestMethod.POST) 
+	public ModelAndView boardPlus(ModelAndView mv, int bl_num, HttpServletResponse response) throws IOException {
+		System.out.println(bl_num);
+		if(memberDao.deleteBoard(bl_num)) {
+			System.out.println("주소록 삭제");
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			out.println("<script>alert('배송지가 삭제되었습니다.');location.href='/auction/board/list'</script>"); 
+			out.flush();
+		}
+		mv.setViewName("redirect:/board/list");
+		return mv;
+	}
+	@RequestMapping(value = "/charge", method=RequestMethod.GET)
+	public ModelAndView accountCreateGet(ModelAndView mv, HttpSession session) {
+		MemberVO user= (MemberVO)session.getAttribute("user");
+		VirtualAccountVO account = memberDao.selectAccount(user.getMe_id());
+		mv.addObject("account", account);
+		mv.setViewName("/member/charge");
+		return mv;
+	}
+	@RequestMapping(value = "/create/account", method=RequestMethod.POST)
+	public ModelAndView accountCreatePost(ModelAndView mv, HttpServletResponse response, VirtualAccountVO account) throws IOException {
+		if(memberService.insertVirtualAccount(account)) {
+			System.out.println("가상계좌 개설성공!");
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			out.println("<script>alert('가상계좌가 개설되었습니다.');location.href='/auction/charge'</script>"); 
+			out.flush();
+		}
+		mv.setViewName("redirect:/charge");
+		return mv;
+	}
+	@ResponseBody
+	@RequestMapping(value = "/charge/insert", method = RequestMethod.POST)
+	public String charge(@RequestParam("ch_amount") int ch_amount,
+			@RequestParam("ch_method") String ch_method,
+			@RequestParam("ch_charge_date") Date ch_charge_date,
+			HttpSession session) {
+		ChargeVO chargeVO = new ChargeVO();
+	    chargeVO.setCh_amount(ch_amount);
+	    chargeVO.setCh_method(ch_method);
+	    chargeVO.setCh_charge_date(ch_charge_date);
+	    MemberVO user = (MemberVO)session.getAttribute("user");
+	    chargeVO.setCh_va_me_id(user.getMe_id());
+	    memberService.insertCharge(chargeVO);
+	    memberService.updateVirtual(user.getMe_id(), ch_amount);
+	    return "redirect:/charge/point";
 	}
 }

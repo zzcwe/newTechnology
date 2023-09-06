@@ -1,6 +1,10 @@
 package kr.th.auction.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -10,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import kr.th.auction.dao.AdminDAO;
 import kr.th.auction.service.AdminService;
+import kr.th.auction.vo.MembershipLevelVO;
 import kr.th.auction.vo.ProductCategoryVO;
 import kr.th.auction.vo.ProductLargeCategoryVO;
 import kr.th.auction.vo.ProductMiddleCategoryVO;
@@ -56,6 +61,24 @@ public class AdminController {
 	public ModelAndView finalCategory(ModelAndView mv, ProductCategoryVO newCategory) {
 		adminDao.insertFinalCategory(newCategory);
 		mv.setViewName("redirect:/admin/category");
+		return mv;
+	}
+	@RequestMapping(value = "/admin/membership/level", method = RequestMethod.GET)
+	public ModelAndView membershipLevelGet(ModelAndView mv) {
+		mv.setViewName("/admin/membershipLevel");
+		return mv;
+	}
+	@RequestMapping(value = "/admin/membership/level", method = RequestMethod.POST)
+	public ModelAndView membershipLevelPOST(ModelAndView mv, HttpServletResponse response, MembershipLevelVO level) throws IOException{
+		
+		if(adminDao.insertMembership(level)) {
+			System.out.println("등급 추가");
+			response.setContentType("text/html; charset=UTF-8");
+			PrintWriter out = response.getWriter();
+			out.println("<script>alert('등급이 추가되었습니다.');location.href='/auction/admin/membership/level'</script>"); 
+			out.flush();
+		}
+		mv.setViewName("redirect:/admin/membership/level");
 		return mv;
 	}
 	
