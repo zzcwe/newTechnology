@@ -65,6 +65,7 @@ public class MemberContoller {
 		}else {
 			
 		}
+		
 		mv.setViewName("redirect:/");
 		return mv;
 	}

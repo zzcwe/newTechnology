@@ -1,6 +1,19 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    
+<style>
+.container{height: 800px;
+}
+h1{
+margin-bottom: 40px;}
+.form-group {
+	margin-bottom: 30px;
+}
+button {
+	margin-top: 30px;
+}
+</style>    
 <div class="container">
 	<h1>로그인</h1>
 	<form action="<c:url value='/login'></c:url>" method="post">
