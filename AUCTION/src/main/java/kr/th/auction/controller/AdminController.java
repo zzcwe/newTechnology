@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import kr.th.auction.dao.AdminDAO;
@@ -32,10 +33,6 @@ public class AdminController {
 	public ModelAndView adminCategory(ModelAndView mv) {
 		ArrayList<ProductLargeCategoryVO> largeCategory = adminService.selectLargeCategory();
 		mv.addObject("largeCategory", largeCategory);
-		ArrayList<ProductMiddleCategoryVO> middleCategory = adminDao.selectMiddleCategory();
-		mv.addObject("middleCategory", middleCategory);
-		ArrayList<ProductSmallCategoryVO> smallCategory = adminDao.selectSmallCategory();
-		mv.addObject("smallCategory", smallCategory);
 		mv.setViewName("/admin/category");
 		return mv;
 	}
