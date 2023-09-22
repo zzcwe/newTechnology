@@ -24,23 +24,23 @@ public String getAr_bid_time() {
 
 public double getAr_next_bid_price() {
 	double unit = 0;
-	if( ar_bid_price < 20){
-		unit = 1;
+	if( ar_bid_price < 50000){
+		unit = 3000;
 	}
-	if(20 <= ar_bid_price && ar_bid_price < 50) {
-		unit = 4;
+	if(50000 <= ar_bid_price && ar_bid_price < 200000) {
+		unit = 5000;
 	}
-	if(50 <= ar_bid_price && ar_bid_price < 200) {
-		unit = 7;
+	if(200000 <= ar_bid_price && ar_bid_price < 400000) {
+		unit = 10000;
 	}
-	if(200 <= ar_bid_price && ar_bid_price < 400) {
-		unit = 15;
+	if(400000 <= ar_bid_price && ar_bid_price < 1000000) {
+		unit = 30000;
 	}
-	if(400 <= ar_bid_price && ar_bid_price < 800) {
-		unit = 35;
+	if(1000000 <= ar_bid_price && ar_bid_price < 2000000) {
+		unit = 50000;
 	}
-	if(800 <= ar_bid_price) {
-		unit = 70;
+	if(2000000 <= ar_bid_price) {
+		unit = 100000;
 	}
 	double nextBidPrice = ar_bid_price + unit;
 	

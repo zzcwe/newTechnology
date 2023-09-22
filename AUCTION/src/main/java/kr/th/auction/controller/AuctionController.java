@@ -185,20 +185,20 @@ public class AuctionController {
 	}
 	
 	@RequestMapping(value = "/report", method=RequestMethod.POST)
-	public ModelAndView report(ModelAndView mv, ReportVO report, int au_num, HttpSession session) {
+	public ModelAndView report(ModelAndView mv, ReportVO report, int au_num) {
 		boolean register = auctionService.insertReport(report);
 		mv.setViewName("redirect:/onairauction/detail/"+ au_num);
 		return mv;
 	}
 	@RequestMapping(value = "/message", method=RequestMethod.POST)
-	public ModelAndView message(ModelAndView mv, MessageVO message, int au_num, HttpSession session) {
+	public ModelAndView message(ModelAndView mv, MessageVO message, int au_num) {
 		boolean register = auctionService.insertMessage(message);
 		mv.setViewName("redirect:/onairauction/detail/"+au_num);
 		return mv;
 	}
 	@ResponseBody
 	@RequestMapping(value = "/delivery", method=RequestMethod.POST)
-	public Map<String,Object> delivery(@RequestBody Map<String, String> formData, HttpSession session) {
+	public Map<String,Object> delivery(@RequestBody Map<String, String> formData) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		String one = formData.get("value1");
 		String two = formData.get("value2");
@@ -243,7 +243,7 @@ public class AuctionController {
 		int intNowTime = Integer.parseInt(lol);
 		boolean bidPossible = auctionService.timeChange(auctionOpenTime, serverTime);
 		System.out.println(auction.getAu_final_date());
-		if(auction.getAu_final_date() == null) { //localDateTime은 null로 비교불가 ??
+		if(auction.getAu_final_date() == null) {
 			if(bidPossible) {
 				boolean res = auctionService.insertBid(price, expense, userAccount, user, auctionNum);
 				map.put("res", res);
@@ -251,6 +251,48 @@ public class AuctionController {
 				String lastTime = auctionService.endTime(lastRecord, auction);
 				String intEnd = lastTime.replaceAll("[^0-9]", "");
 				map.put("intEnd", intEnd);
+			}
+			map.put("bidPossible", bidPossible);
+		}
+		return map;
+	}
+	@ResponseBody
+	@RequestMapping(value = "/auctionBidImmediate", method=RequestMethod.POST) 
+	public Map<String, Object> auctionBidImmediate(@RequestBody Map<String, String> formData, HttpSession session){
+		String value1 = formData.get("value1");
+		double price = Double.parseDouble(value1);
+		Map<String, Object> map = new HashMap<String, Object>();
+		MemberVO user = (MemberVO)session.getAttribute("user");
+		String id = user.getMe_id();
+		VirtualAccountVO userAccount = auctionService.selectAccount(id);
+		String levelName = user.getMe_ml_name();
+		MembershipLevelVO level = auctionService.selectMebership(levelName);
+		int expense = level.getMl_expense();
+		String three = formData.get("value3");
+		int value3 = Integer.parseInt(three);
+		AuctionVO auction = auctionService.getAuction(value3);
+		System.out.println(auction);
+		int auctionNum = auction.getAu_num();
+		LocalDateTime auctionOpen = auction.au_start_date;
+		//LocalDateTime 타입을 Date 타입으로 바꿔줘야함
+		ZoneId zoneId = ZoneId.systemDefault();
+		Date auctionOpenTime = Date.from(auctionOpen.atZone(zoneId).toInstant());
+		Date serverTime = new Date();
+		SimpleDateFormat date = new SimpleDateFormat("yyyy. MM. dd. HH:mm:ss");
+		String now = date.format(serverTime);
+		String lol = now.replaceAll("[^0-9]", "");
+		lol = lol.substring(8);
+		int intNowTime = Integer.parseInt(lol);
+		boolean bidPossible = auctionService.timeChange(auctionOpenTime, serverTime);
+		System.out.println(auction.getAu_final_date());
+		if(auction.getAu_final_date() == null) {
+			if(bidPossible) {
+				boolean res = auctionService.insertBid(price, expense, userAccount, user, auctionNum);
+				map.put("res", res);
+				AuctionRecordVO lastRecord = auctionService.lastAuctionRecord(auctionNum);
+				String lastTime = auctionService.endTime(lastRecord, auction);
+				String intEnd = lastTime.replaceAll("[^0-9]", "");
+				map.put("intEnd", "0");
 			}
 			map.put("bidPossible", bidPossible);
 		}
