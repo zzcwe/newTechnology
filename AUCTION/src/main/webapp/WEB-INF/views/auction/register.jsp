@@ -66,7 +66,7 @@
 				<input type="radio" class="au_limitbidtime" id="five" name="au_limit_bid_time" value="180" >3분		
 			</div>
 			<input type="hidden" name="au_me_id" value="${user.me_id}">	
-		  	<button type="submit" class="btn btn-success">전송</button>
+		  	<button type="submit" class="btn btn-success">등록</button>
 		</form>
 	</div>
 </c:if>

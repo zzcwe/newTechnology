@@ -11,13 +11,13 @@
 </head>
 <style>
 .product-intro{
-    width: 12%;
-    margin-top: 50px;
+    width: 28%;
+    margin-top: 5px;
     margin-left: 10px;
     margin-bottom: 50px;
     border: 2px solid black;
     border-radius: 10px;
-    height: 500px;
+    height: 250px;
     float: left;
 }
 h1{

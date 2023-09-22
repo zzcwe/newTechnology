@@ -4,7 +4,7 @@
  
 <style>
  	.container{
- 		height: auto;
+ 		height: 1000px;
  	}
  	.container-h1{
  		margin-top: 40px; margin-bottom: 30px;

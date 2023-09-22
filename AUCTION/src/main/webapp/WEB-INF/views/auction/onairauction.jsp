@@ -653,7 +653,12 @@
     #modal_double_btn1{
         position: absolute; 
         width:150px; padding: 5px;
-        bottom: 80px; right: 226px; font-weight: bold; cursor: pointer; color: red;
+        bottom: 80px; right: 335px; font-weight: bold; cursor: pointer; color: red;
+    }
+    #modal_immediate_btn1{
+        position: absolute; 
+        width:150px; padding: 5px;
+        bottom: 80px; right: 115px; font-weight: bold; cursor: pointer; color: red;
     }
     .add2 .send_message button{
         width: 100%;   border-radius: 20px; padding: 5px; cursor: pointer; margin-top: 5px; border: 1px solid #ccc;
@@ -785,11 +790,11 @@ padding: 0 20px 0 20px;
     <div class="body-container">
         <div class="box left left1">
         <div id="tabl6">
-        <h3 style="color: #28a745">Server Time ${nowTime}</h3>
+        <h4 style="color: #28a745">Server Time ${nowTime}</h3>
         </div>
         	<div style="height: 37px;">
-	            <h1 class="title"> ${auctionProduct.pr_name}
-	            </h1>
+	            <h4 class="title" style="font-weight: bold;"> ${auctionProduct.pr_name}
+	            </h4>
             </div>
             <div class="swiper-body">
                 <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper mySwiper2">
@@ -840,7 +845,7 @@ padding: 0 20px 0 20px;
             </div>
         </div>
         <div class="box mid">
-            <div class="chat-top" id="tabl3">현재 입찰자: ${lastAuctionRecord.getAr_me_id()} 님	입찰가격: $ ${lastAuctionRecord.getAr_bid_price()}	입찰시간: ${lastAuctionRecord.getAr_bid_time()}</div>
+            <div class="chat-top" id="tabl3">현재 입찰자: ${lastAuctionRecord.getAr_me_id()} 님	입찰가격: ₩ ${lastAuctionRecord.getAr_bid_price()}	입찰시간: ${lastAuctionRecord.getAr_bid_time()}</div>
             <div class="chat-mid-cover">
             <div class="chat-mid" id="messages"></div>
             </div>
@@ -918,7 +923,7 @@ padding: 0 20px 0 20px;
                             <dt class="c_000">현재 입찰가</dt>
                             <dd>
                             	
-                                	<font class="f18" id="tabl2">$ ${lastAuctionRecord.getAr_bid_price()}</font>
+                                	<font class="f18" id="tabl2">₩ ${lastAuctionRecord.getAr_bid_price()}</font>
                    				
                                 <button class="history_btn" id="modal_open_btn3" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)" >
                                     <span class="all_icon"></span>
@@ -933,7 +938,7 @@ padding: 0 20px 0 20px;
                             <dt class="dt123">입찰 견적가</dt>
                             <dd>
                                 <strong>
-                                    <font class="amount">원화표시가격</font>
+                                    <font class="amount">달러표시가격</font>
                                 </strong>
                                 <button class="est_view" id="modal_open_btn2" onmouseover="mouseOver1(this)" onmouseout="mouseOut1(this)">
                                     자세히보기
@@ -1001,11 +1006,12 @@ padding: 0 20px 0 20px;
         <div id="modal">
         	<div id="tabl4">
              <div class="modal_content1">
-                 회원님의 입찰신청 가격은 : $ ${lastAuctionRecord.getAr_next_bid_price()} 입니다. <br> <!-- get안쓰고 .ar_next_bid_price-->
-                    입찰하시겠습니까?
+                 회원님의 입찰신청 가격은 : ₩ ${lastAuctionRecord.getAr_next_bid_price()} 입니다. <br> <!-- get안쓰고 .ar_next_bid_price-->
+                    입찰하시겠습니까? (즉시 입찰가:₩ ${auction.getAu_immediate()})
              </div>
             </div>
             <button type="submit" id="modal_double_btn1">x  2 입찰하기</button>
+            <button type="submit" id="modal_immediate_btn1">즉시 입찰하기</button>
             <button type="button" id="modal_close_btn1">입찰 취소</button>
             <button type="submit" id="modal_confirm_btn1">입찰 확인</button>
         </div>
@@ -1017,9 +1023,9 @@ padding: 0 20px 0 20px;
             <div class="modal_content2">
                 <div class="box" id="tabl5">
                     <ul>
-                        <li>현재 입찰가($) : $ ${lastAuctionRecord.getAr_bid_price()}</li>
+                        <li>현재 입찰가(₩) : ₩ ${lastAuctionRecord.getAr_bid_price()}</li>
 	    				<li>환율 : </li>
-	    				<li>₩표시 가격 :</li>
+	    				<li>$ 표시 가격 :</li>
                     </ul>
                 </div>
             </div>
@@ -1099,6 +1105,7 @@ padding: 0 20px 0 20px;
     <div id="tabl9">
     <input type="hidden" id="nextPrice" value="${lastAuctionRecord.getAr_next_bid_price()}">
     </div>
+    <input type="hidden" id="immediate" value="${auction.getAu_immediate()}">
     <input type="hidden" id="product" value="${auctionProduct.getPr_code()}">
     <input type="hidden" id="seller" value="${auctionSeller.getMe_id()}">
     <input type="hidden" id="sellerLikeState" value="${sellerLikeState}">
@@ -1560,7 +1567,6 @@ padding: 0 20px 0 20px;
     				success: function(result){
     					if(result.res == true){
     						alert("입찰신청 가격으로 입찰하였습니다.");
-    						$("#nextPrice").val(result.nextPrice);
     						$("#intEnd").val(result.intEnd);	
     						//location.reload() //새로고침 코드
     						}
@@ -1596,7 +1602,6 @@ padding: 0 20px 0 20px;
      				success: function(result){
      					if(result.res == true){
      						alert("입찰신청 가격의 2배로 입찰하였습니다.");
-     						$("#nextPrice").val(result.nextPrice);
      						$("#intEnd").val(result.intEnd);	
      						//location.reload() //새로고침 코드
      						}
@@ -1612,6 +1617,41 @@ padding: 0 20px 0 20px;
      				}
          		});
          });
+    $('#modal_immediate_btn1').click(function () {
+   	 var price =	$("#immediate").val();
+        var end  = $("#intEnd").val();
+        var auctionNum = '${auction.getAu_num()}'
+        	
+        var formData = {
+        	 value1 : price,
+        	 value2 : end,
+        	 value3 : auctionNum
+        }
+        	
+        		$.ajax({
+        			type: 'POST',
+    				url: '<c:url value="/auctionBidImmediate"></c:url>',
+    				data: JSON.stringify(formData), //두개이상보낼때는 json.stringify제거
+    				dataType:"JSON",
+    				contentType:"application/json; charset=UTF-8",
+    				success: function(result){
+    					if(result.res == true){
+    						alert("즉시입찰가로 입찰하였습니다.");
+    						$("#intEnd").val(result.intEnd);	
+    						//location.reload() //새로고침 코드
+    						}
+    					else if(result.bidPossible == false){
+    						alert("경매시작전 입니다.")
+    					}
+    					else if(result.res == false) {
+    						alert("보유계좌에 잔액이 부족합니다.");
+    					}
+    				},
+    				error : function () {
+    					console.log("error");
+    				}
+        		});
+        });
     $('.product-seller .sel_btn').click(function () {
     	var sellerLikeState = $("#sellerLikeState").val();
     	var seller = $("#seller").val();

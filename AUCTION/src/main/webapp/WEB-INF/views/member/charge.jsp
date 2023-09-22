@@ -36,7 +36,7 @@ label.error{color:red;}
 	margin-top: 10px;	
 }	
 .form-control{
-	width: 100px; height:100px;
+	width: 1110px;
 }
 </style>
 <body>

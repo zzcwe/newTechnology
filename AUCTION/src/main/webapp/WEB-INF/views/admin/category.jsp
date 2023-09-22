@@ -175,8 +175,7 @@ $.validator.addMethod(
 
 
 //대분류명 변경시 대분류명의 밸류값을 받아와서 중분류명의 카테고리명을 새로 AJAX를 통해서 불러옴
-var category1 = document.getElementById("boxOne");
-var category2 = document.getElementById("boxTwo");
+
 var category3 = document.getElementById("boxThree");
 var category4 = document.getElementById("boxFour");
 

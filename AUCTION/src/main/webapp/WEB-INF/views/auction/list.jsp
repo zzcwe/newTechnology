@@ -2,15 +2,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 
 <link rel="stylesheet" href="<c:url value='/resources/css/bootstrap.min.css'></c:url>">
-<script src="<c:url value='/resources/js/jquery.min.js'></c:url>"></script>
-<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'></c:url>"></script>
+<!-- <script src="<c:url value='/resources/js/jquery.min.js'></c:url>"></script>
+<script src="<c:url value='/resources/js/bootstrap.bundle.min.js'></c:url>"></script>-->
  
 <style>
  	.container{
- 		height: 800px;
+ 		height: auto; 
  	}
  	.container-h1{
  		margin-top: 40px; margin-bottom: 30px;
+ 	}
+ 	.container-table{
+ 		width: 1300px;
  	}
  	.auction{
  		 text-align: center;	
