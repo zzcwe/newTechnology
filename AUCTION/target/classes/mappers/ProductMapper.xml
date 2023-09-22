@@ -83,4 +83,10 @@
 	<select id="selectProductTotalCountLocation" resultType="int">
 		select count(*) from product where pr_location = #{pr_location}
 	</select>
+	<select id="selectClothProduct" resultType="kr.th.auction.vo.ProductVO">
+		select * from product join product_category on pr_pc_num = pc_num 
+		join product_small_category on pc_psc_num = psc_num 
+		join product_middle_category on psc_pmc_num = pmc_num 
+		join product_large_category on pmc_plc_num = plc_num where plc_name = #{string};
+	</select>
 </mapper>

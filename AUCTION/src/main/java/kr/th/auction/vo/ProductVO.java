@@ -22,6 +22,21 @@ public class ProductVO {
 	String pr_size;
 	int pr_st_num;
 	int pr_pc_num;
+	
+	int pc_num;
+	String pc_name;
+	int pc_psc_num;
+	
+	int psc_num;
+	String psc_name;
+	int psc_pmc_num;
+	
+	int pmc_num;
+	String pmc_name;
+	int pmc_plc_num;
+	
+	int plc_num;
+	String plc_name;
 }
 	
 	

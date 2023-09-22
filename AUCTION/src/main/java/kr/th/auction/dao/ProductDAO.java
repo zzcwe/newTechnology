@@ -56,4 +56,6 @@ public interface ProductDAO {
 	int selectProductTotalCountIntro(@Param("pr_intro")String pr_intro);
 
 	int selectProductTotalCountLocation(@Param("pr_location")String pr_location);
+
+	ArrayList<ProductVO> selectClothProduct(@Param("string")String string);
 }
