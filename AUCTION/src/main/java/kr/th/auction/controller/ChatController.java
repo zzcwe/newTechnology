@@ -92,19 +92,19 @@ public class ChatController {
     	
     	String room = message.split(",")[2];
     	String sender = message.split(",")[1];
-    	message = message.split(",")[0];
+    	String message1 = message.split(",")[0];
     	System.out.println(sender);
     	
-        logger.info("Message From "+sender + ": "+message);
+        logger.info("Message From "+sender + ": "+ message1);
         try {
             final Basic basic=session.getBasicRemote();
-            basic.sendText("<나> : "+message);
+            basic.sendText("<나> : "+ message1);
             
         }catch (Exception e) {
             e.printStackTrace();
             //System.out.println(e.getMessage());
         }
-        sendAllSessionToMessage(session, sender, message, room);
+        sendAllSessionToMessage(session, sender, message1, room);
     }
     
     @OnError
